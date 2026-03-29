@@ -35,9 +35,303 @@
             height: 100vh;
         }
 
+        /* 标题界面样式 */
+        .title-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(ellipse at center, rgba(212, 175, 55, 0.1) 0%, transparent 70%),
+                linear-gradient(180deg, #0f0f1e 0%, #1a1a2e 50%, #16213e 100%);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+
+        .title-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .title-screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(212, 175, 55, 0.03) 35px, rgba(212, 175, 55, 0.03) 70px),
+                repeating-linear-gradient(-45deg, transparent, transparent 35px, rgba(233, 69, 96, 0.02) 35px, rgba(233, 69, 96, 0.02) 70px);
+            pointer-events: none;
+        }
+
+        .top-ornament {
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            opacity: 0;
+            animation: fadeInDown 1s ease 0.2s forwards;
+        }
+
+        .ornament-line {
+            width: 100px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        .ornament-symbol {
+            color: var(--gold);
+            font-size: 1.5rem;
+            opacity: 0.8;
+        }
+
+        .title-content {
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .main-title {
+            font-family: "Zhi Mang Xing", cursive;
+            font-size: 6rem;
+            color: var(--gold);
+            text-shadow: 
+                0 0 20px rgba(212, 175, 55, 0.5),
+                0 0 40px rgba(212, 175, 55, 0.3),
+                0 0 60px rgba(212, 175, 55, 0.1);
+            letter-spacing: 20px;
+            margin-bottom: 10px;
+            opacity: 0;
+            animation: fadeInUp 1.2s ease 0.5s forwards;
+            position: relative;
+        }
+
+        .main-title::after {
+            content: '昭燃';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            color: transparent;
+            background: linear-gradient(180deg, var(--gold) 0%, var(--accent-light) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            opacity: 0.3;
+            filter: blur(8px);
+            animation: flame 3s ease-in-out infinite;
+        }
+
+        @keyframes flame {
+            0%, 100% { opacity: 0.2; transform: translateY(0) scale(1); }
+            50% { opacity: 0.4; transform: translateY(-5px) scale(1.02); }
+        }
+
+        .subtitle {
+            font-size: 1.8rem;
+            color: var(--text-muted);
+            letter-spacing: 8px;
+            margin-bottom: 40px;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.8s forwards;
+        }
+
+        .title-divider {
+            width: 300px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+            margin: 30px auto;
+            position: relative;
+            opacity: 0;
+            animation: fadeIn 1s ease 1s forwards;
+        }
+
+        .title-divider::before,
+        .title-divider::after {
+            content: '◆';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gold);
+            font-size: 0.8rem;
+        }
+
+        .title-divider::before { left: 0; }
+        .title-divider::after { right: 0; }
+
+        .quote-section {
+            max-width: 600px;
+            margin: 0 auto 50px;
+            padding: 30px;
+            border-left: 3px solid var(--gold);
+            border-right: 3px solid var(--gold);
+            background: rgba(212, 175, 55, 0.05);
+            opacity: 0;
+            animation: fadeIn 1s ease 1.2s forwards;
+        }
+
+        .quote-text {
+            font-size: 1.3rem;
+            color: var(--gold-light);
+            font-style: italic;
+            line-height: 2;
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .quote-author {
+            text-align: right;
+            color: var(--text-muted);
+            font-size: 1rem;
+        }
+
+        .enter-button {
+            padding: 18px 60px;
+            background: transparent;
+            border: 2px solid var(--gold);
+            color: var(--gold);
+            font-family: "Noto Serif SC", serif;
+            font-size: 1.2rem;
+            letter-spacing: 4px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            opacity: 0;
+            animation: fadeInUp 1s ease 1.5s forwards;
+        }
+
+        .enter-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .enter-button:hover::before {
+            left: 100%;
+        }
+
+        .enter-button:hover {
+            background: var(--gold);
+            color: var(--bg-dark);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .bottom-ornament {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            opacity: 0;
+            animation: fadeIn 1s ease 1.8s forwards;
+        }
+
+        .scroll-hint {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            letter-spacing: 2px;
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 60px;
+            background: linear-gradient(180deg, var(--gold), transparent);
+            animation: scrollPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes scrollPulse {
+            0%, 100% { opacity: 0.3; transform: scaleY(1); }
+            50% { opacity: 1; transform: scaleY(1.2); }
+        }
+
+        .corner-ornament {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            opacity: 0;
+            animation: fadeIn 1s ease 2s forwards;
+        }
+
+        .corner-ornament.top-left {
+            top: 40px;
+            left: 40px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .corner-ornament.top-right {
+            top: 40px;
+            right: 40px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .corner-ornament.bottom-left {
+            bottom: 40px;
+            left: 40px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .corner-ornament.bottom-right {
+            bottom: 40px;
+            right: 40px;
+            border-left: none;
+            border-top: none;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+
+        @keyframes fadeInDown {
+            from { 
+                opacity: 0; 
+                transform: translateX(-50%) translateY(-20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateX(-50%) translateY(0); 
+            }
+        }
+
+        /* 主界面容器 */
         .container {
             display: grid;
-            grid-template-columns: 300px 1fr 340px;
+            grid-template-columns: 300px 1fr 380px;
             height: 100vh;
             gap: 1px;
             background: var(--border);
@@ -52,7 +346,6 @@
             position: relative;
         }
 
-        /* 顶部馆名 */
         .museum-header {
             padding: 25px 20px;
             background: linear-gradient(180deg, rgba(212, 175, 55, 0.15) 0%, transparent 100%);
@@ -202,7 +495,6 @@
             flex-direction: column;
         }
 
-        /* 顶部名言栏 */
         .map-header {
             position: absolute;
             top: 0;
@@ -353,7 +645,7 @@
             border: 1px solid var(--gold);
         }
 
-        /* 右侧信息面板 */
+        /* 右侧信息面板 - 优化布局 */
         .info-panel {
             background: var(--bg-panel);
             display: flex;
@@ -362,7 +654,7 @@
         }
 
         .info-header {
-            padding: 30px 25px;
+            padding: 25px;
             background: linear-gradient(180deg, rgba(212, 175, 55, 0.1) 0%, transparent 100%);
             border-bottom: 1px solid var(--border);
             position: relative;
@@ -379,12 +671,12 @@
         }
 
         .current-year {
-            font-size: 2.8rem;
+            font-size: 2.5rem;
             font-weight: 900;
             color: var(--gold);
             font-family: "Times New Roman", serif;
             line-height: 1;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             text-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
         }
 
@@ -394,19 +686,79 @@
         }
 
         .current-title {
-            font-size: 1.2rem;
-            line-height: 1.5;
+            font-size: 1.1rem;
+            line-height: 1.4;
             color: var(--text);
             font-weight: 600;
         }
 
         .info-content {
-            padding: 25px;
+            padding: 20px 25px;
             flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* 时期介绍卡片 - 新增样式 */
+        .era-intro-card {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 5px;
+        }
+
+        .era-intro-title {
+            font-size: 0.9rem;
+            color: var(--gold);
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 1px;
+        }
+
+        .era-intro-title::before {
+            content: '▸';
+            color: var(--gold);
+        }
+
+        .era-intro-content {
+            color: var(--text-muted);
+            line-height: 1.8;
+            font-size: 0.9rem;
+            text-align: justify;
+        }
+
+        .era-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .era-detail-item {
+            background: rgba(212, 175, 55, 0.05);
+            padding: 10px 12px;
+            border-radius: 6px;
+            border-left: 2px solid var(--gold);
+        }
+
+        .era-detail-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .era-detail-value {
+            font-size: 0.85rem;
+            color: var(--text);
+            font-weight: 600;
         }
 
         .info-section {
-            margin-bottom: 25px;
             position: relative;
         }
 
@@ -457,13 +809,13 @@
 
         .meta-list {
             display: grid;
-            gap: 12px;
+            gap: 10px;
         }
 
         .meta-item {
             display: flex;
             justify-content: space-between;
-            padding: 12px 0;
+            padding: 10px 0;
             border-bottom: 1px solid var(--border);
             align-items: center;
         }
@@ -479,37 +831,53 @@
             font-size: 0.9rem;
         }
 
-        .file-path-box {
+        /* 典藏位置 - 缩小为底部栏 */
+        .file-path-bar {
             background: rgba(0, 0, 0, 0.3);
-            padding: 15px;
-            border-radius: 8px;
+            padding: 10px 15px;
+            border-radius: 6px;
             font-family: "Courier New", monospace;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            border-left: 3px solid var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: auto;
+        }
+
+        .file-path-label {
+            color: var(--gold);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            white-space: nowrap;
+        }
+
+        .file-path-value {
             color: var(--text-muted);
             word-break: break-all;
-            border: 1px solid var(--gold);
-            border-left-width: 3px;
-            margin-top: 10px;
+            line-height: 1.4;
         }
 
         .nav-buttons {
             display: flex;
             gap: 12px;
-            padding: 20px 25px;
+            padding: 15px 25px;
             border-top: 2px solid var(--border);
             background: rgba(0,0,0,0.2);
         }
 
         .nav-btn {
             flex: 1;
-            padding: 14px;
+            padding: 12px;
             background: transparent;
             border: 1px solid var(--gold);
             color: var(--gold);
             border-radius: 6px;
             cursor: pointer;
             font-family: inherit;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             transition: all 0.2s;
             letter-spacing: 2px;
         }
@@ -527,9 +895,8 @@
             color: var(--text-muted);
         }
 
-        /* 底部装饰 */
         .footer-quote {
-            padding: 15px;
+            padding: 12px;
             text-align: center;
             font-size: 0.75rem;
             color: var(--text-muted);
@@ -541,7 +908,11 @@
         /* 响应式 */
         @media (max-width: 1200px) {
             .container {
-                grid-template-columns: 260px 1fr 300px;
+                grid-template-columns: 260px 1fr 340px;
+            }
+            .main-title {
+                font-size: 4rem;
+                letter-spacing: 10px;
             }
         }
 
@@ -554,14 +925,63 @@
                 max-height: 200px;
             }
             .info-panel {
-                max-height: 300px;
+                max-height: 400px;
+            }
+            .title-screen {
+                padding: 20px;
+            }
+            .main-title {
+                font-size: 3rem;
+                letter-spacing: 8px;
+            }
+            .quote-section {
+                padding: 20px;
+            }
+            .quote-text {
+                font-size: 1.1rem;
+            }
+            .era-details-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
 <base target="_blank">
 </head>
 <body>
-    <div class="container">
+    <!-- 标题界面 -->
+    <div class="title-screen" id="titleScreen">
+        <div class="corner-ornament top-left"></div>
+        <div class="corner-ornament top-right"></div>
+        <div class="corner-ornament bottom-left"></div>
+        <div class="corner-ornament bottom-right"></div>
+        
+        <div class="top-ornament">
+            <div class="ornament-line"></div>
+            <span class="ornament-symbol">❖</span>
+            <div class="ornament-line"></div>
+        </div>
+
+        <div class="title-content">
+            <h1 class="main-title">昭燃</h1>
+            <p class="subtitle">历史地图馆</p>
+            
+            <div class="title-divider"></div>
+            
+            <div class="quote-section">
+                <p class="quote-text">"究天人之际，通古今之变，成一家之言"</p>
+                <p class="quote-author">—— 司马迁《报任安书》</p>
+            </div>
+            
+            <button class="enter-button" onclick="enterMuseum()">进入展馆</button>
+        </div>
+
+        <div class="bottom-ornament">
+            <p class="scroll-hint">点击按钮开启时空之旅</p>
+            <div class="scroll-line"></div>
+        </div>
+    </div>
+
+    <div class="container" id="mainContainer" style="opacity: 0; transition: opacity 0.5s ease;">
         <!-- 左侧时间轴 -->
         <div class="timeline-panel">
             <div class="museum-header">
@@ -621,6 +1041,17 @@
             </div>
 
             <div class="info-content">
+                <!-- 时期详细介绍卡片 -->
+                <div class="era-intro-card" id="eraIntroCard" style="display: none;">
+                    <div class="era-intro-title" id="eraIntroTitle">时期背景</div>
+                    <div class="era-intro-content" id="eraIntroContent">
+                        选择一个历史时期查看详细介绍...
+                    </div>
+                    <div class="era-details-grid" id="eraDetailsGrid">
+                        <!-- 动态生成详细数据 -->
+                    </div>
+                </div>
+
                 <div class="info-section">
                     <div class="section-title">史家之言</div>
                     <div class="wisdom-quote" id="wisdomQuote">
@@ -630,14 +1061,14 @@
                 </div>
 
                 <div class="info-section">
-                    <div class="section-title">时期概述</div>
+                    <div class="section-title">地图详解</div>
                     <div class="section-content" id="eraDesc">
                         从史前文明到现代中国，五十八幅历史地图串联起华夏文明的时空脉络。点击左侧时间轴，开启你的历史地理探索之旅。
                     </div>
                 </div>
 
                 <div class="info-section">
-                    <div class="section-title">详细信息</div>
+                    <div class="section-title">基本信息</div>
                     <div class="meta-list">
                         <div class="meta-item">
                             <span class="meta-label">历史时期</span>
@@ -658,9 +1089,10 @@
                     </div>
                 </div>
 
-                <div class="info-section">
-                    <div class="section-title">典藏位置</div>
-                    <div class="file-path-box" id="filePath">maps/...</div>
+                <!-- 典藏位置 - 缩小为底部栏 -->
+                <div class="file-path-bar" id="filePathBar">
+                    <span class="file-path-label">典藏</span>
+                    <span class="file-path-value" id="filePath">maps/...</span>
                 </div>
             </div>
 
@@ -676,6 +1108,75 @@
     </div>
 
     <script>
+        // 进入展馆函数
+        function enterMuseum() {
+            const titleScreen = document.getElementById('titleScreen');
+            const mainContainer = document.getElementById('mainContainer');
+            
+            titleScreen.classList.add('hidden');
+            mainContainer.style.opacity = '1';
+        }
+
+        // 历史时期详细数据
+        const eraDetailsData = {
+            "史前时期": {
+                background: "中华文明的起源阶段，从旧石器时代早期人类活动开始，历经新石器时代的农耕革命，至夏朝建立前。这一时期见证了人类从采集狩猎向定居农业的转变，黄河流域与长江流域相继出现仰韶文化、龙山文化、河姆渡文化等灿烂的新石器时代文明。",
+                politics: "原始氏族社会，母系氏族向父系氏族过渡，部落联盟形成",
+                economy: "采集渔猎 → 原始农业（粟作、稻作）→ 家畜饲养 → 手工业萌芽",
+                culture: "彩陶文化、黑陶文化、玉器文化、原始宗教与图腾崇拜",
+                military: "部落冲突，石器武器，城墙雏形（如良渚古城）",
+                legacy: "奠定了中华文明的地理基础，形成了早期华夏族群的分布格局"
+            },
+            "早期国家": {
+                background: "从夏朝建立到秦朝统一前的早期国家形成与发展时期。夏商周三代确立了世袭王权、宗法分封、礼乐制度等国家形态的基本框架。春秋战国时期是社会大变革时代，铁器牛耕推广，百家争鸣，郡县制取代分封制，为大一统帝国奠定基础。",
+                politics: "世袭王权 → 宗法分封 → 礼乐文明 → 郡县制萌芽 → 变法图强",
+                economy: "青铜时代 → 铁器时代，井田制瓦解，土地私有确立，商业城市发展",
+                culture: "甲骨文、金文、诸子百家、诗经楚辞、礼乐文化、阴阳五行",
+                military: "车战 → 步骑协同，兵法理论（孙子兵法），兼并战争规模扩大",
+                legacy: "确立了华夏文明的核心价值观与政治制度原型，形成'中国'概念"
+            },
+            "帝国形成": {
+                background: "秦汉时期是中国历史上第一个大一统帝国形成与巩固的关键阶段。秦朝确立中央集权制度，汉朝继承并发展，形成'汉承秦制'的政治传统。这一时期确立了儒家思想的正统地位，开通丝绸之路，汉族作为主体民族形成，奠定了此后两千年中国政治制度的基本格局。",
+                politics: "皇帝制度、三公九卿、郡县制、察举制、内外朝制度",
+                economy: "重农抑商、盐铁官营、均输平准、丝绸之路开通、大地主经济发展",
+                culture: "独尊儒术、经学兴盛、史记汉书、汉赋、造纸术发明",
+                military: "征兵制 → 募兵制，骑兵军团，对匈奴战争，西域都护府设立",
+                legacy: "确立大一统帝国模式，形成汉族认同，奠定中华帝国基本疆域"
+            },
+            "成熟帝国": {
+                background: "从三国鼎立到元朝灭亡的帝国成熟与演变时期。这一时期经历了分裂与统一的多次循环，中央集权制度不断完善，科举制取代门阀政治，经济重心南移，儒释道三教融合，文学艺术达到高峰。唐宋变革标志着中国传统社会从贵族政治向士大夫政治的转型。",
+                politics: "九品中正 → 科举制、三省六部、二府三司、行省制度、宣政院",
+                economy: "均田制 → 两税法，经济重心南移，纸币出现，海外贸易繁荣",
+                culture: "魏晋玄学、唐诗宋词、理学兴起、印刷术、指南针、火药应用",
+                military: "府兵制 → 募兵制，火药武器，边防体系（长城、九边），水军发展",
+                legacy: "形成成熟的文官政治体系，确立东亚文化圈核心地位，技术革新领先世界"
+            },
+            "传统社会": {
+                background: "明清时期是中国传统社会的最后阶段，也是集权制度发展到顶峰的时期。明朝废除丞相制，清朝设立军机处，君主专制达到极致。同时，这一时期中国疆域最终奠定，多民族国家完全形成，人口突破四亿。但后期闭关锁国政策导致与西方发展差距拉大。",
+                politics: "内阁制度、军机处、密折制度、督抚制度、理藩院、改土归流",
+                economy: "一条鞭法、摊丁入亩，商品经济繁荣，资本主义萌芽，白银货币化",
+                culture: "心学、考据学、小说戏曲繁荣（四大名著）、西学东渐",
+                military: "卫所制 → 绿营兵，火器装备（红衣大炮），八旗制度，海军衰落",
+                legacy: "奠定现代中国疆域基础，形成统一的多民族国家格局，传统社会达到顶峰"
+            },
+            "中国近代": {
+                background: "从鸦片战争到新中国成立的百年动荡与转型时期。中国逐步沦为半殖民地半封建社会，经历太平天国、洋务运动、戊戌变法、辛亥革命、国民革命、抗日战争等重大事件。这一时期是传统中国向现代国家转型的痛苦过程，也是中华民族觉醒和抗争的历史。",
+                politics: "半殖民地半封建、维新变法、共和革命、军阀割据、党国体制",
+                economy: "自然经济解体，近代工业起步，民族资本主义曲折发展，官僚资本",
+                culture: "中体西用、新文化运动、马克思主义传播、抗日救亡文化",
+                military: "近代海军创建，新军编练，北伐战争，抗日战争，国共内战",
+                legacy: "结束封建帝制，建立共和国，民族意识全面觉醒，为现代中国奠定基础"
+            },
+            "中国现代": {
+                background: "新中国成立后的社会主义革命与建设时期，特别是改革开放以来的快速发展阶段。中国从农业国转变为世界第二大经济体，完成工业化、城镇化进程，综合国力显著提升。这一时期见证了中华民族的伟大复兴，'一带一路'倡议标志着中国重新走向世界舞台中心。",
+                politics: "社会主义制度、人民代表大会制、改革开放、一国两制、依法治国",
+                economy: "计划经济 → 市场经济，世界工厂，全球第二大经济体，科技创新",
+                culture: "双百方针、文化体制改革、文化自信、中华文化走出去",
+                military: "现代化国防，两弹一星，航母编队，信息化战争能力，维和力量",
+                legacy: "实现民族独立与富强，探索中国式现代化道路，推动构建人类命运共同体"
+            }
+        };
+
         // 历史数据与名言库
         const historyData = [
             { year: "旧石器", name: "中国境内早期人类主要遗址分布图", era: "史前时期", path: "maps/prehistoric/early_humans.png", span: "约200万年前-1万年前", count: "多处", desc: "展示元谋人、北京人、山顶洞人等早期人类遗址在中国境内的分布情况，揭示人类文明的起源之火。", quote: "火的使用，是人类第一次支配自然力", quoteAuthor: "—— 恩格斯" },
@@ -683,8 +1184,8 @@
             { year: "前1850年", name: "夏朝疆域图", era: "早期国家", path: "maps/ancient/xia_1850bc.png", span: "约前2070-前1600年", count: "1个", desc: "中国史书记载的第一个世袭制王朝，统治中心位于黄河中游，标志着中国早期国家形态的形成。", quote: "大道之行也，天下为公", quoteAuthor: "—— 《礼记·礼运》" },
             { year: "前1400年", name: "商朝疆域图", era: "早期国家", path: "maps/ancient/shang_1400bc.png", span: "约前1600-前1046年", count: "1个", desc: "中国第一个有直接文字记载的王朝，青铜文明高度发达，统治范围较夏朝显著扩大。", quote: "殷鉴不远", quoteAuthor: "—— 《诗经·大雅·荡》" },
             { year: "前950年", name: "西周疆域图", era: "早期国家", path: "maps/ancient/western_zhou_950bc.png", span: "前1046-前771年", count: "1个", desc: "实行分封制和宗法制，建立了较为完备的政治制度，统治范围覆盖黄河流域和长江流域部分地区。", quote: "普天之下，莫非王土", quoteAuthor: "—— 《诗经·小雅·北山》" },
-            { year: "前600年", name: "战国形势图（一）", era: "早期国家", path: "maps/ancient/warring_states_600bc.png", span: "前475-前221年", count: "7个主要", desc: "春秋战国时期，诸侯争霸，齐、楚、燕、韩、赵、魏、秦七雄并立，社会剧烈变革。", quote: "天下兴亡，匹夫有责", quoteAuthor: "—— 顾炎武" },
-            { year: "前296年", name: "战国形势图（二）", era: "早期国家", path: "maps/ancient/warring_states_296bc.png", span: "前475-前221年", count: "7个主要", desc: "战国后期，秦国经过商鞅变法日益强大，开始统一六国的进程，中央集权制度逐步形成。", quote: "变法图强", quoteAuthor: "—— 《史记·商君列传》" },
+            { year: "前600年", name: "春秋形势图", era: "早期国家", path: "maps/ancient/warring_states_600bc.png", span: "前771-前476年", count: "7个主要", desc: "春秋时期，周王室衰微，诸侯争霸，齐桓、晋文等霸主相继崛起。铁器牛耕推广，井田制瓦解，私田兴起。孔子创儒家，老子立道家，百家争鸣先声已现。华夏与四夷融合加速，“诸夏”认同强化，为秦汉统一奠定基础。", quote: "天下兴亡，匹夫有责", quoteAuthor: "—— 顾炎武" },
+            { year: "前296年", name: "战国形势图", era: "早期国家", path: "maps/ancient/warring_states_296bc.png", span: "前475-前221年", count: "7个主要", desc: "战国时期，齐、楚、燕、韩、赵、魏、秦七雄并立，社会剧烈变革。秦国经过商鞅变法日益强大，开始统一六国的进程，中央集权制度逐步形成。", quote: "变法图强", quoteAuthor: "—— 《史记·商君列传》" },
             { year: "前214年", name: "秦朝疆域图", era: "帝国形成", path: "maps/empire/qin_214bc.png", span: "前221-前206年", count: "1个", desc: "中国历史上第一个大一统中央集权帝国，统一文字、货币、度量衡，修筑长城，疆域东至大海，西达陇西。", quote: "千古一帝", quoteAuthor: "—— 李贽《藏书》" },
             { year: "前207年", name: "刘邦破咸阳形势图", era: "帝国形成", path: "maps/empire/liu_bang_207bc.png", span: "秦末", count: "多路义军", desc: "秦末农民起义，刘邦率军攻入咸阳，秦朝灭亡，楚汉争霸的序幕拉开。", quote: "大风起兮云飞扬", quoteAuthor: "—— 刘邦《大风歌》" },
             { year: "前206年", name: "项羽分封形势图", era: "帝国形成", path: "maps/empire/xiang_yu_206bc.png", span: "秦末汉初", count: "18个诸侯", desc: "项羽自立为西楚霸王，分封十八路诸侯，恢复了战国时期的割据局面，为楚汉战争埋下伏笔。", quote: "力拔山兮气盖世", quoteAuthor: "—— 项羽《垓下歌》" },
@@ -842,7 +1343,50 @@
             document.getElementById('metaSpan').textContent = data.span;
             document.getElementById('metaCount').textContent = data.count;
             document.getElementById('metaIndex').textContent = `${index + 1} / ${historyData.length}`;
+            
+            // 更新缩小的典藏位置
             document.getElementById('filePath').textContent = data.path;
+
+            // 更新时期详细介绍卡片
+            updateEraIntroCard(data.era);
+        }
+
+        function updateEraIntroCard(era) {
+            const card = document.getElementById('eraIntroCard');
+            const details = eraDetailsData[era];
+            
+            if (details) {
+                card.style.display = 'block';
+                document.getElementById('eraIntroTitle').textContent = `${era} · 时期背景`;
+                document.getElementById('eraIntroContent').textContent = details.background;
+                
+                // 生成详细数据网格
+                const grid = document.getElementById('eraDetailsGrid');
+                grid.innerHTML = `
+                    <div class="era-detail-item">
+                        <div class="era-detail-label">政治制度</div>
+                        <div class="era-detail-value">${details.politics}</div>
+                    </div>
+                    <div class="era-detail-item">
+                        <div class="era-detail-label">经济发展</div>
+                        <div class="era-detail-value">${details.economy}</div>
+                    </div>
+                    <div class="era-detail-item">
+                        <div class="era-detail-label">文化特征</div>
+                        <div class="era-detail-value">${details.culture}</div>
+                    </div>
+                    <div class="era-detail-item">
+                        <div class="era-detail-label">军事边防</div>
+                        <div class="era-detail-value">${details.military}</div>
+                    </div>
+                    <div class="era-detail-item" style="grid-column: 1 / -1;">
+                        <div class="era-detail-label">历史遗产</div>
+                        <div class="era-detail-value">${details.legacy}</div>
+                    </div>
+                `;
+            } else {
+                card.style.display = 'none';
+            }
         }
 
         function updateQuotes(data) {
