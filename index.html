@@ -1427,33 +1427,37 @@
             document.getElementById('footerQuote').textContent = footerQuotes[Math.floor(Math.random() * footerQuotes.length)];
         }
 
-        function loadImage(path) {
-            placeholder.style.display = 'none';
-            mapImage.classList.remove('loaded');
+function loadImage(path) {
+    placeholder.style.display = 'none';
+    mapImage.classList.remove('loaded');
 
-            const currentTransform = mapWrapper.style.transform;
+    // 添加仓库名前缀（关键修复）
+    const basePath = '/Zhaoran-s-history-map-Station/';
+    const fullPath = basePath + path;
+    
+    const currentTransform = mapWrapper.style.transform;
+    mapImage.src = fullPath;  // 使用完整路径
 
-            mapImage.src = path;
+    mapImage.onload = function() {
+        mapImage.classList.add('loaded');
+        mapWrapper.style.transform = currentTransform || `translate(calc(-50% + ${translateX}px), calc(-50% + ${translateY}px)) scale(${scale})`;
+    };
 
-            mapImage.onload = function() {
-                mapImage.classList.add('loaded');
-                mapWrapper.style.transform = currentTransform || `translate(calc(-50% + ${translateX}px), calc(-50% + ${translateY}px)) scale(${scale})`;
-            };
-
-            mapImage.onerror = function() {
-                mapImage.classList.remove('loaded');
-                placeholder.style.display = 'block';
-                placeholder.innerHTML = `
-                    <div class="placeholder-icon">📁</div>
-                    <div class="welcome-text">昭燃的历史地图馆</div>
-                    <div style="color: var(--text-muted); margin-top: 10px;">
-                        请将图片放置于：<br>
-                        <span style="color: var(--gold);">${path}</span>
-                    </div>
-                `;
-                resetView();
-            };
-        }
+    mapImage.onerror = function() {
+        mapImage.classList.remove('loaded');
+        placeholder.style.display = 'block';
+        placeholder.innerHTML = `
+            <div class="placeholder-icon">📁</div>
+            <div class="welcome-text">昭燃的历史地图馆</div>
+            <div style="color: var(--text-muted); margin-top: 10px;">
+                图片加载失败：<br>
+                <span style="color: var(--gold);">${fullPath}</span><br>
+                <span style="font-size: 0.8rem;">请检查文件是否存在</span>
+            </div>
+        `;
+        resetView();
+    };
+}
 
         // 缩放功能
         function zoomIn() {
