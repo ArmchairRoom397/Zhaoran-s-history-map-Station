@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>昭燃的历史地图馆</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Zhi+Mang+Xing&display=swap');
@@ -11,6 +11,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         :root {
@@ -25,14 +26,19 @@
             --text-muted: #a0a0a0;
             --border: rgba(255,255,255,0.1);
             --ink: #2c3e50;
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
         }
 
-        body {
+        html, body {
             font-family: "Noto Serif SC", "Source Han Serif SC", serif;
             background: var(--bg-dark);
             color: var(--text);
             overflow: hidden;
-            height: 100vh;
+            height: 100%;
+            height: 100dvh; /* 使用动态视口高度 */
+            width: 100%;
+            position: fixed; /* 防止移动端滚动反弹 */
         }
 
         /* 标题界面样式 */
@@ -42,6 +48,7 @@
             left: 0;
             width: 100%;
             height: 100%;
+            height: 100dvh;
             background: 
                 radial-gradient(ellipse at center, rgba(212, 175, 55, 0.1) 0%, transparent 70%),
                 linear-gradient(180deg, #0f0f1e 0%, #1a1a2e 50%, #16213e 100%);
@@ -51,6 +58,9 @@
             justify-content: center;
             align-items: center;
             transition: opacity 0.8s ease, visibility 0.8s ease;
+            padding: 20px;
+            padding-top: calc(20px + var(--safe-top));
+            padding-bottom: calc(20px + var(--safe-bottom));
         }
 
         .title-screen.hidden {
@@ -100,21 +110,24 @@
             text-align: center;
             position: relative;
             z-index: 10;
+            width: 100%;
+            max-width: 600px;
         }
 
         .main-title {
             font-family: "Zhi Mang Xing", cursive;
-            font-size: 6rem;
+            font-size: clamp(3rem, 10vw, 6rem);
             color: var(--gold);
             text-shadow: 
                 0 0 20px rgba(212, 175, 55, 0.5),
                 0 0 40px rgba(212, 175, 55, 0.3),
                 0 0 60px rgba(212, 175, 55, 0.1);
-            letter-spacing: 20px;
+            letter-spacing: clamp(8px, 3vw, 20px);
             margin-bottom: 10px;
             opacity: 0;
             animation: fadeInUp 1.2s ease 0.5s forwards;
             position: relative;
+            line-height: 1.2;
         }
 
         .main-title::after {
@@ -138,19 +151,19 @@
         }
 
         .subtitle {
-            font-size: 1.8rem;
+            font-size: clamp(1.2rem, 4vw, 1.8rem);
             color: var(--text-muted);
-            letter-spacing: 8px;
-            margin-bottom: 40px;
+            letter-spacing: clamp(4px, 1.5vw, 8px);
+            margin-bottom: 30px;
             opacity: 0;
             animation: fadeInUp 1s ease 0.8s forwards;
         }
 
         .title-divider {
-            width: 300px;
+            width: min(300px, 80%);
             height: 2px;
             background: linear-gradient(90deg, transparent, var(--gold), transparent);
-            margin: 30px auto;
+            margin: 25px auto;
             position: relative;
             opacity: 0;
             animation: fadeIn 1s ease 1s forwards;
@@ -171,8 +184,8 @@
 
         .quote-section {
             max-width: 600px;
-            margin: 0 auto 50px;
-            padding: 30px;
+            margin: 0 auto 40px;
+            padding: 20px;
             border-left: 3px solid var(--gold);
             border-right: 3px solid var(--gold);
             background: rgba(212, 175, 55, 0.05);
@@ -181,27 +194,27 @@
         }
 
         .quote-text {
-            font-size: 1.3rem;
+            font-size: clamp(1rem, 3vw, 1.3rem);
             color: var(--gold-light);
             font-style: italic;
-            line-height: 2;
+            line-height: 1.8;
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         .quote-author {
             text-align: right;
             color: var(--text-muted);
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
 
         .enter-button {
-            padding: 18px 60px;
+            padding: 16px 48px;
             background: transparent;
             border: 2px solid var(--gold);
             color: var(--gold);
             font-family: "Noto Serif SC", serif;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             letter-spacing: 4px;
             cursor: pointer;
             position: relative;
@@ -209,6 +222,11 @@
             transition: all 0.3s ease;
             opacity: 0;
             animation: fadeInUp 1s ease 1.5s forwards;
+            border-radius: 4px;
+            min-height: 56px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .enter-button::before {
@@ -222,11 +240,13 @@
             transition: left 0.5s ease;
         }
 
-        .enter-button:hover::before {
+        .enter-button:hover::before,
+        .enter-button:active::before {
             left: 100%;
         }
 
-        .enter-button:hover {
+        .enter-button:hover,
+        .enter-button:active {
             background: var(--gold);
             color: var(--bg-dark);
             box-shadow: 0 0 30px rgba(212, 175, 55, 0.4);
@@ -235,26 +255,26 @@
 
         .bottom-ornament {
             position: absolute;
-            bottom: 60px;
+            bottom: 40px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
             opacity: 0;
             animation: fadeIn 1s ease 1.8s forwards;
         }
 
         .scroll-hint {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--text-muted);
             letter-spacing: 2px;
         }
 
         .scroll-line {
             width: 1px;
-            height: 60px;
+            height: 40px;
             background: linear-gradient(180deg, var(--gold), transparent);
             animation: scrollPulse 2s ease-in-out infinite;
         }
@@ -266,37 +286,37 @@
 
         .corner-ornament {
             position: absolute;
-            width: 80px;
-            height: 80px;
+            width: 60px;
+            height: 60px;
             border: 2px solid rgba(212, 175, 55, 0.3);
             opacity: 0;
             animation: fadeIn 1s ease 2s forwards;
         }
 
         .corner-ornament.top-left {
-            top: 40px;
-            left: 40px;
+            top: 20px;
+            left: 20px;
             border-right: none;
             border-bottom: none;
         }
 
         .corner-ornament.top-right {
-            top: 40px;
-            right: 40px;
+            top: 20px;
+            right: 20px;
             border-left: none;
             border-bottom: none;
         }
 
         .corner-ornament.bottom-left {
-            bottom: 40px;
-            left: 40px;
+            bottom: 20px;
+            left: 20px;
             border-right: none;
             border-top: none;
         }
 
         .corner-ornament.bottom-right {
-            bottom: 40px;
-            right: 40px;
+            bottom: 20px;
+            right: 20px;
             border-left: none;
             border-top: none;
         }
@@ -328,13 +348,52 @@
             }
         }
 
-        /* 主界面容器 */
+        /* 主界面容器 - 移动端优化 */
         .container {
             display: grid;
             grid-template-columns: 300px 1fr 380px;
-            height: 100vh;
+            height: 100%;
+            height: 100dvh;
+            width: 100%;
             gap: 1px;
             background: var(--border);
+            position: relative;
+        }
+
+        /* 移动端标签栏 */
+        .mobile-tabs {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: var(--bg-panel);
+            border-top: 2px solid var(--gold);
+            z-index: 200;
+            padding-bottom: var(--safe-bottom);
+        }
+
+        .mobile-tab {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            gap: 4px;
+        }
+
+        .mobile-tab.active {
+            color: var(--gold);
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .mobile-tab-icon {
+            font-size: 1.3rem;
         }
 
         /* 左侧时间轴 */
@@ -344,14 +403,16 @@
             flex-direction: column;
             overflow: hidden;
             position: relative;
+            height: 100%;
         }
 
         .museum-header {
-            padding: 25px 20px;
+            padding: 20px 15px;
             background: linear-gradient(180deg, rgba(212, 175, 55, 0.15) 0%, transparent 100%);
             border-bottom: 2px solid var(--gold);
             text-align: center;
             position: relative;
+            flex-shrink: 0;
         }
 
         .museum-header::before,
@@ -365,74 +426,76 @@
             opacity: 0.6;
         }
 
-        .museum-header::before { left: 15px; }
-        .museum-header::after { right: 15px; }
+        .museum-header::before { left: 10px; }
+        .museum-header::after { right: 10px; }
 
         .museum-title {
             font-family: "Zhi Mang Xing", cursive;
-            font-size: 1.8rem;
+            font-size: 1.6rem;
             color: var(--gold);
             text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
-            letter-spacing: 4px;
-            margin-bottom: 8px;
+            letter-spacing: 3px;
+            margin-bottom: 6px;
         }
 
         .museum-subtitle {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-muted);
             letter-spacing: 2px;
         }
 
         .quote-banner {
-            padding: 12px 15px;
+            padding: 10px 12px;
             background: rgba(0, 0, 0, 0.3);
             border-left: 3px solid var(--gold);
-            margin: 10px 15px;
-            font-size: 0.8rem;
+            margin: 8px 12px;
+            font-size: 0.75rem;
             color: var(--gold-light);
             font-style: italic;
-            line-height: 1.6;
+            line-height: 1.5;
+            flex-shrink: 0;
         }
 
         .quote-author {
             text-align: right;
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--text-muted);
-            margin-top: 5px;
+            margin-top: 4px;
         }
 
         .timeline-list {
             flex: 1;
             overflow-y: auto;
-            padding: 10px;
+            padding: 8px;
+            -webkit-overflow-scrolling: touch;
         }
 
         .timeline-list::-webkit-scrollbar {
-            width: 6px;
+            width: 4px;
         }
 
         .timeline-list::-webkit-scrollbar-thumb {
             background: var(--gold);
-            border-radius: 3px;
+            border-radius: 2px;
         }
 
         .era-label {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--gold);
             text-transform: uppercase;
-            letter-spacing: 2px;
-            padding: 10px;
+            letter-spacing: 1.5px;
+            padding: 8px;
             font-weight: 700;
             border-left: 3px solid var(--gold);
             background: rgba(212, 175, 55, 0.1);
-            margin: 5px 0;
+            margin: 4px 0;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
 
         .era-quote {
-            font-size: 0.65rem;
+            font-size: 0.6rem;
             color: var(--text-muted);
             font-weight: normal;
             font-style: italic;
@@ -441,16 +504,18 @@
         .timeline-item {
             display: flex;
             align-items: center;
-            padding: 12px 10px;
-            margin: 3px 0;
+            padding: 10px 8px;
+            margin: 2px 0;
             border-radius: 6px;
             cursor: pointer;
             transition: all 0.2s;
             position: relative;
             border-left: 2px solid transparent;
+            min-height: 44px; /* 触摸友好 */
         }
 
-        .timeline-item:hover {
+        .timeline-item:hover,
+        .timeline-item:active {
             background: var(--bg-hover);
             border-left-color: var(--gold);
         }
@@ -466,21 +531,22 @@
         }
 
         .year-badge {
-            min-width: 65px;
-            padding: 5px 8px;
+            min-width: 60px;
+            padding: 4px 6px;
             background: rgba(0,0,0,0.3);
             border-radius: 4px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 700;
             text-align: center;
-            margin-right: 10px;
+            margin-right: 8px;
             font-family: "Courier New", monospace;
             color: var(--gold-light);
             border: 1px solid rgba(212, 175, 55, 0.3);
+            flex-shrink: 0;
         }
 
         .item-name {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             line-height: 1.3;
             flex: 1;
             color: var(--text);
@@ -493,6 +559,7 @@
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            height: 100%;
         }
 
         .map-header {
@@ -500,49 +567,50 @@
             top: 0;
             left: 0;
             right: 0;
-            padding: 15px 30px;
-            background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, transparent 100%);
+            padding: 12px 20px;
+            background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, transparent 100%);
             z-index: 50;
             display: flex;
             justify-content: center;
             align-items: center;
+            pointer-events: none;
         }
 
         .header-quote {
             text-align: center;
             color: var(--gold);
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-style: italic;
             text-shadow: 0 2px 4px rgba(0,0,0,0.8);
-            max-width: 600px;
-            line-height: 1.5;
+            max-width: 500px;
+            line-height: 1.4;
         }
 
         .header-quote-author {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
-            margin-top: 5px;
+            margin-top: 4px;
             font-style: normal;
         }
 
         .toolbar {
             position: absolute;
-            bottom: 30px;
+            bottom: 80px;
             left: 50%;
             transform: translateX(-50%);
             display: flex;
-            gap: 12px;
+            gap: 10px;
             z-index: 100;
-            background: rgba(22, 33, 62, 0.9);
-            padding: 10px 20px;
-            border-radius: 30px;
+            background: rgba(22, 33, 62, 0.95);
+            padding: 8px 16px;
+            border-radius: 25px;
             border: 1px solid var(--gold);
             backdrop-filter: blur(10px);
         }
 
         .tool-btn {
-            width: 40px;
-            height: 40px;
+            width: 44px;
+            height: 44px;
             border: 1px solid var(--gold);
             background: transparent;
             color: var(--gold);
@@ -551,11 +619,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             transition: all 0.2s;
+            touch-action: manipulation;
         }
 
-        .tool-btn:hover {
+        .tool-btn:hover,
+        .tool-btn:active {
             background: var(--gold);
             color: var(--bg-dark);
             transform: scale(1.1);
@@ -572,6 +642,7 @@
                 linear-gradient(45deg, transparent 48%, rgba(255,255,255,0.02) 50%, transparent 52%),
                 linear-gradient(-45deg, transparent 48%, rgba(255,255,255,0.02) 50%, transparent 52%);
             background-size: 100% 100%, 100% 100%, 20px 20px, 20px 20px;
+            touch-action: none; /* 防止默认触摸行为 */
         }
 
         .map-viewport.grabbing {
@@ -584,11 +655,12 @@
             left: 50%;
             transform: translate(-50%, -50%);
             transition: none;
+            will-change: transform; /* 性能优化 */
         }
 
         .map-image {
-            max-width: 80vw;
-            max-height: 80vh;
+            max-width: 85vw;
+            max-height: 70vh;
             object-fit: contain;
             box-shadow: 0 20px 60px rgba(0,0,0,0.6);
             user-select: none;
@@ -608,115 +680,120 @@
             transform: translate(-50%, -50%);
             text-align: center;
             color: var(--text-muted);
-            padding: 40px;
+            padding: 30px;
+            width: 90%;
+            max-width: 400px;
         }
 
         .placeholder-icon {
-            font-size: 5rem;
-            margin-bottom: 20px;
+            font-size: 4rem;
+            margin-bottom: 15px;
             opacity: 0.4;
         }
 
         .welcome-text {
             font-family: "Zhi Mang Xing", cursive;
-            font-size: 2rem;
+            font-size: 1.8rem;
             color: var(--gold);
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         .welcome-quote {
-            font-size: 1rem;
+            font-size: 0.9rem;
             color: var(--text-muted);
             font-style: italic;
-            max-width: 400px;
-            line-height: 1.8;
+            line-height: 1.6;
         }
 
         .zoom-level {
             position: absolute;
-            bottom: 30px;
-            right: 30px;
-            background: rgba(0,0,0,0.7);
-            padding: 10px 20px;
+            bottom: 80px;
+            right: 20px;
+            background: rgba(0,0,0,0.8);
+            padding: 8px 16px;
             border-radius: 20px;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--gold);
             font-family: "Courier New", monospace;
             border: 1px solid var(--gold);
         }
 
-        /* 右侧信息面板 - 优化布局 */
+        /* 右侧信息面板 */
         .info-panel {
             background: var(--bg-panel);
             display: flex;
             flex-direction: column;
-            overflow-y: auto;
+            overflow: hidden;
+            height: 100%;
         }
 
         .info-header {
-            padding: 25px;
+            padding: 20px;
             background: linear-gradient(180deg, rgba(212, 175, 55, 0.1) 0%, transparent 100%);
             border-bottom: 1px solid var(--border);
             position: relative;
+            flex-shrink: 0;
         }
 
         .info-header::after {
             content: '';
             position: absolute;
             bottom: 0;
-            left: 25px;
-            right: 25px;
+            left: 20px;
+            right: 20px;
             height: 2px;
             background: linear-gradient(90deg, transparent, var(--gold), transparent);
         }
 
         .current-year {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             font-weight: 900;
             color: var(--gold);
             font-family: "Times New Roman", serif;
             line-height: 1;
-            margin-bottom: 12px;
-            text-shadow: 0 0 30px rgba(212, 175, 55, 0.3);
+            margin-bottom: 8px;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
         }
 
         .current-year.bc {
             color: var(--accent-light);
-            text-shadow: 0 0 30px rgba(233, 69, 96, 0.3);
+            text-shadow: 0 0 20px rgba(233, 69, 96, 0.3);
         }
 
         .current-title {
-            font-size: 1.1rem;
+            font-size: 1rem;
             line-height: 1.4;
             color: var(--text);
             font-weight: 600;
         }
 
         .info-content {
-            padding: 20px 25px;
+            padding: 15px 20px;
             flex: 1;
+            overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
+            -webkit-overflow-scrolling: touch;
         }
 
-        /* 时期介绍卡片 - 新增样式 */
+        /* 时期介绍卡片 */
         .era-intro-card {
             background: rgba(0, 0, 0, 0.2);
             border: 1px solid rgba(212, 175, 55, 0.2);
             border-radius: 8px;
-            padding: 20px;
+            padding: 15px;
             margin-bottom: 5px;
         }
 
         .era-intro-title {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: var(--gold);
             font-weight: 700;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             letter-spacing: 1px;
         }
 
@@ -727,35 +804,36 @@
 
         .era-intro-content {
             color: var(--text-muted);
-            line-height: 1.8;
-            font-size: 0.9rem;
+            line-height: 1.7;
+            font-size: 0.85rem;
             text-align: justify;
         }
 
         .era-details-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 15px;
+            grid-template-columns: 1fr;
+            gap: 8px;
+            margin-top: 12px;
         }
 
         .era-detail-item {
             background: rgba(212, 175, 55, 0.05);
-            padding: 10px 12px;
+            padding: 8px 10px;
             border-radius: 6px;
             border-left: 2px solid var(--gold);
         }
 
         .era-detail-label {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-muted);
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .era-detail-value {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--text);
             font-weight: 600;
+            line-height: 1.4;
         }
 
         .info-section {
@@ -763,92 +841,97 @@
         }
 
         .section-title {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--gold);
             text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-bottom: 12px;
+            letter-spacing: 2px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             font-weight: 700;
         }
 
         .section-title::before {
             content: '';
-            width: 20px;
+            width: 16px;
             height: 2px;
             background: var(--gold);
         }
 
         .section-content {
             color: var(--text-muted);
-            line-height: 1.9;
-            font-size: 0.95rem;
+            line-height: 1.8;
+            font-size: 0.9rem;
             text-align: justify;
         }
 
         .wisdom-quote {
             background: rgba(212, 175, 55, 0.08);
             border-left: 3px solid var(--gold);
-            padding: 15px 20px;
-            margin: 15px 0;
+            padding: 12px 16px;
+            margin: 10px 0;
             font-style: italic;
             color: var(--gold-light);
-            line-height: 1.8;
+            line-height: 1.7;
             border-radius: 0 8px 8px 0;
+            font-size: 0.9rem;
         }
 
         .wisdom-author {
             text-align: right;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--text-muted);
-            margin-top: 8px;
+            margin-top: 6px;
             font-style: normal;
         }
 
         .meta-list {
             display: grid;
-            gap: 10px;
+            gap: 8px;
         }
 
         .meta-item {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
+            padding: 8px 0;
             border-bottom: 1px solid var(--border);
             align-items: center;
         }
 
         .meta-label {
             color: var(--text-muted);
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
 
         .meta-value {
             color: var(--text);
             font-weight: 700;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            text-align: right;
+            flex: 1;
+            margin-left: 10px;
         }
 
-        /* 典藏位置 - 缩小为底部栏 */
+        /* 典藏位置 */
         .file-path-bar {
             background: rgba(0, 0, 0, 0.3);
-            padding: 10px 15px;
+            padding: 8px 12px;
             border-radius: 6px;
             font-family: "Courier New", monospace;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-muted);
             border-left: 3px solid var(--gold);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             margin-top: auto;
+            flex-shrink: 0;
         }
 
         .file-path-label {
             color: var(--gold);
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             text-transform: uppercase;
             letter-spacing: 1px;
             white-space: nowrap;
@@ -857,15 +940,16 @@
         .file-path-value {
             color: var(--text-muted);
             word-break: break-all;
-            line-height: 1.4;
+            line-height: 1.3;
         }
 
         .nav-buttons {
             display: flex;
-            gap: 12px;
-            padding: 15px 25px;
+            gap: 10px;
+            padding: 12px 20px;
             border-top: 2px solid var(--border);
             background: rgba(0,0,0,0.2);
+            flex-shrink: 0;
         }
 
         .nav-btn {
@@ -877,12 +961,15 @@
             border-radius: 6px;
             cursor: pointer;
             font-family: inherit;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             transition: all 0.2s;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
+            min-height: 44px;
+            touch-action: manipulation;
         }
 
-        .nav-btn:hover:not(:disabled) {
+        .nav-btn:hover:not(:disabled),
+        .nav-btn:active:not(:disabled) {
             background: var(--gold);
             color: var(--bg-dark);
             font-weight: 700;
@@ -896,53 +983,303 @@
         }
 
         .footer-quote {
-            padding: 12px;
+            padding: 10px;
             text-align: center;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-muted);
             font-style: italic;
             border-top: 1px solid var(--border);
             background: rgba(0,0,0,0.2);
+            flex-shrink: 0;
         }
 
-        /* 响应式 */
-        @media (max-width: 1200px) {
+        /* 移动端响应式设计 - 核心修改 */
+        @media (max-width: 1024px) {
             .container {
-                grid-template-columns: 260px 1fr 340px;
-            }
-            .main-title {
-                font-size: 4rem;
-                letter-spacing: 10px;
+                grid-template-columns: 260px 1fr 320px;
             }
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 768px) {
+            /* 移动端布局改为单栏，通过标签切换 */
             .container {
-                grid-template-columns: 1fr;
-                grid-template-rows: auto 1fr auto;
+                display: flex;
+                flex-direction: column;
+                grid-template-columns: none;
+                padding-bottom: 60px; /* 为底部标签栏留出空间 */
             }
-            .timeline-panel {
-                max-height: 200px;
+
+            .mobile-tabs {
+                display: flex;
             }
+
+            /* 面板默认隐藏，通过active类显示 */
+            .timeline-panel,
             .info-panel {
-                max-height: 400px;
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 60px;
+                width: 100%;
+                height: calc(100% - 60px);
+                z-index: 10;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+                background: var(--bg-panel);
             }
-            .title-screen {
-                padding: 20px;
+
+            .info-panel {
+                transform: translateX(100%);
             }
-            .main-title {
-                font-size: 3rem;
-                letter-spacing: 8px;
+
+            .timeline-panel.active,
+            .info-panel.active {
+                transform: translateX(0);
             }
-            .quote-section {
-                padding: 20px;
+
+            .map-panel {
+                width: 100%;
+                height: 100%;
+                z-index: 1;
             }
-            .quote-text {
-                font-size: 1.1rem;
+
+            /* 地图区全屏显示 */
+            .map-image {
+                max-width: 95vw;
+                max-height: 75vh;
             }
+
+            .toolbar {
+                bottom: 90px;
+                padding: 6px 12px;
+            }
+
+            .tool-btn {
+                width: 48px;
+                height: 48px;
+                font-size: 1.4rem;
+            }
+
+            .zoom-level {
+                bottom: 90px;
+                right: 15px;
+            }
+
+            /* 时间轴优化 */
+            .timeline-panel {
+                background: var(--bg-panel);
+            }
+
+            .museum-header {
+                padding: 15px;
+            }
+
+            .museum-title {
+                font-size: 1.4rem;
+            }
+
+            /* 信息面板优化 */
+            .info-header {
+                padding: 15px;
+            }
+
+            .current-year {
+                font-size: 1.8rem;
+            }
+
+            .current-title {
+                font-size: 0.95rem;
+            }
+
+            .info-content {
+                padding: 12px 15px;
+            }
+
             .era-details-grid {
                 grid-template-columns: 1fr;
             }
+
+            /* 标题界面优化 */
+            .top-ornament {
+                top: 40px;
+            }
+
+            .ornament-line {
+                width: 60px;
+            }
+
+            .corner-ornament {
+                width: 40px;
+                height: 40px;
+            }
+
+            .bottom-ornament {
+                bottom: 30px;
+            }
+
+            .quote-section {
+                padding: 15px;
+                margin-bottom: 30px;
+            }
+
+            .enter-button {
+                padding: 14px 40px;
+                font-size: 1rem;
+            }
+        }
+
+        /* 横屏模式优化 */
+        @media (max-width: 768px) and (orientation: landscape) {
+            .container {
+                padding-bottom: 50px;
+            }
+
+            .mobile-tabs {
+                height: 50px;
+            }
+
+            .timeline-panel,
+            .info-panel {
+                bottom: 50px;
+                height: calc(100% - 50px);
+            }
+
+            .museum-header {
+                padding: 10px 15px;
+            }
+
+            .quote-banner {
+                display: none;
+            }
+
+            .timeline-list {
+                padding: 5px;
+            }
+
+            .timeline-item {
+                padding: 8px;
+                min-height: 40px;
+            }
+
+            .info-header {
+                padding: 10px 15px;
+            }
+
+            .current-year {
+                font-size: 1.5rem;
+            }
+
+            .toolbar {
+                bottom: 70px;
+            }
+
+            .zoom-level {
+                bottom: 70px;
+            }
+
+            .map-image {
+                max-height: 85vh;
+            }
+        }
+
+        /* 小屏幕手机优化 */
+        @media (max-width: 380px) {
+            .main-title {
+                font-size: 2.5rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .quote-text {
+                font-size: 0.9rem;
+            }
+
+            .current-year {
+                font-size: 1.6rem;
+            }
+
+            .year-badge {
+                min-width: 50px;
+                font-size: 0.7rem;
+            }
+
+            .item-name {
+                font-size: 0.75rem;
+            }
+        }
+
+        /* 触摸设备优化 */
+        @media (hover: none) {
+            .timeline-item:hover {
+                background: transparent;
+                border-left-color: transparent;
+            }
+
+            .timeline-item:active {
+                background: var(--bg-hover);
+                border-left-color: var(--gold);
+            }
+
+            .tool-btn:hover {
+                background: transparent;
+                color: var(--gold);
+                transform: none;
+            }
+
+            .tool-btn:active {
+                background: var(--gold);
+                color: var(--bg-dark);
+                transform: scale(0.95);
+            }
+
+            .nav-btn:hover:not(:disabled) {
+                background: transparent;
+                color: var(--gold);
+            }
+
+            .nav-btn:active:not(:disabled) {
+                background: var(--gold);
+                color: var(--bg-dark);
+            }
+
+            .enter-button:hover {
+                background: transparent;
+                color: var(--gold);
+                transform: none;
+            }
+
+            .enter-button:active {
+                background: var(--gold);
+                color: var(--bg-dark);
+            }
+        }
+
+        /* 防止文本选择 */
+        .no-select {
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* 滚动条样式优化 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--gold);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--gold-light);
         }
     </style>
 <base target="_blank">
@@ -983,7 +1320,7 @@
 
     <div class="container" id="mainContainer" style="opacity: 0; transition: opacity 0.5s ease;">
         <!-- 左侧时间轴 -->
-        <div class="timeline-panel">
+        <div class="timeline-panel" id="timelinePanel">
             <div class="museum-header">
                 <div class="museum-title">昭燃的历史地图馆</div>
                 <div class="museum-subtitle">以史为鉴 · 可以知兴替</div>
@@ -1034,7 +1371,7 @@
         </div>
 
         <!-- 右侧信息面板 -->
-        <div class="info-panel">
+        <div class="info-panel" id="infoPanel">
             <div class="info-header">
                 <div class="current-year" id="currentYear">—</div>
                 <div class="current-title" id="currentTitle">请选择地图开始探索</div>
@@ -1089,7 +1426,7 @@
                     </div>
                 </div>
 
-                <!-- 典藏位置 - 缩小为底部栏 -->
+                <!-- 典藏位置 -->
                 <div class="file-path-bar" id="filePathBar">
                     <span class="file-path-label">典藏</span>
                     <span class="file-path-value" id="filePath">maps/...</span>
@@ -1107,6 +1444,22 @@
         </div>
     </div>
 
+    <!-- 移动端底部标签栏 -->
+    <div class="mobile-tabs" id="mobileTabs">
+        <div class="mobile-tab active" onclick="switchMobileTab('timeline')" id="tab-timeline">
+            <span class="mobile-tab-icon">📜</span>
+            <span>时间轴</span>
+        </div>
+        <div class="mobile-tab" onclick="switchMobileTab('map')" id="tab-map">
+            <span class="mobile-tab-icon">🗺️</span>
+            <span>地图</span>
+        </div>
+        <div class="mobile-tab" onclick="switchMobileTab('info')" id="tab-info">
+            <span class="mobile-tab-icon">📖</span>
+            <span>详情</span>
+        </div>
+    </div>
+
     <script>
         // 进入展馆函数
         function enterMuseum() {
@@ -1115,7 +1468,38 @@
             
             titleScreen.classList.add('hidden');
             mainContainer.style.opacity = '1';
+            
+            // 检测是否为移动端，如果是，默认显示地图标签
+            if (window.innerWidth <= 768) {
+                switchMobileTab('map');
+            }
         }
+
+        // 移动端标签切换
+        function switchMobileTab(tab) {
+            const timelinePanel = document.getElementById('timelinePanel');
+            const infoPanel = document.getElementById('infoPanel');
+            const tabs = document.querySelectorAll('.mobile-tab');
+            
+            // 重置所有标签状态
+            tabs.forEach(t => t.classList.remove('active'));
+            timelinePanel.classList.remove('active');
+            infoPanel.classList.remove('active');
+            
+            // 激活选中标签
+            document.getElementById('tab-' + tab).classList.add('active');
+            
+            if (tab === 'timeline') {
+                timelinePanel.classList.add('active');
+            } else if (tab === 'info') {
+                infoPanel.classList.add('active');
+            }
+            // 'map' 标签不显示任何面板，只显示地图（默认底层）
+        }
+
+        // 检测是否为触摸设备
+        const isTouchDevice = window.matchMedia('(pointer: coarse)').matches;
+        const isMobile = window.innerWidth <= 768;
 
         // 历史时期详细数据
         const eraDetailsData = {
@@ -1257,6 +1641,8 @@
         let translateY = 0;
         let isDragging = false;
         let startX, startY;
+        let initialDistance = 0;
+        let initialScale = 1;
 
         const mapViewport = document.getElementById('mapViewport');
         const mapWrapper = document.getElementById('mapWrapper');
@@ -1330,6 +1716,11 @@
             // 更新按钮状态
             document.getElementById('prevBtn').disabled = index === 0;
             document.getElementById('nextBtn').disabled = index === historyData.length - 1;
+
+            // 移动端：选择后自动切换到地图标签
+            if (window.innerWidth <= 768) {
+                switchMobileTab('map');
+            }
         }
 
         function updateInfoPanel(data, index) {
@@ -1458,12 +1849,12 @@
 
         // 缩放功能
         function zoomIn() {
-            scale = Math.min(scale * 1.2, 5);
+            scale = Math.min(scale * 1.25, 5);
             updateTransform();
         }
 
         function zoomOut() {
-            scale = Math.max(scale / 1.2, 0.2);
+            scale = Math.max(scale / 1.25, 0.2);
             updateTransform();
         }
 
@@ -1486,7 +1877,7 @@
             zoomLevelDisplay.textContent = Math.round(scale * 100) + '%';
         }
 
-        // 鼠标拖拽
+        // 鼠标拖拽（桌面端）
         mapViewport.addEventListener('mousedown', (e) => {
             if (e.target.closest('.toolbar')) return;
             isDragging = true;
@@ -1514,46 +1905,70 @@
             const delta = e.deltaY > 0 ? 0.9 : 1.1;
             scale = Math.max(0.2, Math.min(5, scale * delta));
             updateTransform();
-        });
+        }, { passive: false });
 
-        // 触摸支持
-        let lastTouchDistance = 0;
+        // 触摸支持（移动端优化）
+        let touches = [];
 
         mapViewport.addEventListener('touchstart', (e) => {
-            if (e.touches.length === 2) {
-                lastTouchDistance = Math.hypot(
-                    e.touches[0].clientX - e.touches[1].clientX,
-                    e.touches[0].clientY - e.touches[1].clientY
-                );
-            } else if (e.touches.length === 1) {
+            e.preventDefault();
+            touches = Array.from(e.touches);
+            
+            if (touches.length === 1) {
+                // 单指拖拽
                 isDragging = true;
-                startX = e.touches[0].clientX - translateX;
-                startY = e.touches[0].clientY - translateY;
+                startX = touches[0].clientX - translateX;
+                startY = touches[0].clientY - translateY;
+            } else if (touches.length === 2) {
+                // 双指缩放
+                isDragging = false;
+                initialDistance = Math.hypot(
+                    touches[0].clientX - touches[1].clientX,
+                    touches[0].clientY - touches[1].clientY
+                );
+                initialScale = scale;
             }
-        });
+        }, { passive: false });
 
         mapViewport.addEventListener('touchmove', (e) => {
             e.preventDefault();
-            if (e.touches.length === 2) {
-                const distance = Math.hypot(
-                    e.touches[0].clientX - e.touches[1].clientX,
-                    e.touches[0].clientY - e.touches[1].clientY
+            touches = Array.from(e.touches);
+            
+            if (touches.length === 1 && isDragging) {
+                // 单指拖拽
+                translateX = touches[0].clientX - startX;
+                translateY = touches[0].clientY - startY;
+                updateTransform();
+            } else if (touches.length === 2) {
+                // 双指缩放
+                const currentDistance = Math.hypot(
+                    touches[0].clientX - touches[1].clientX,
+                    touches[0].clientY - touches[1].clientY
                 );
-                if (lastTouchDistance > 0) {
-                    scale = Math.max(0.2, Math.min(5, scale * (distance / lastTouchDistance)));
+                
+                if (initialDistance > 0) {
+                    const newScale = Math.max(0.2, Math.min(5, initialScale * (currentDistance / initialDistance)));
+                    scale = newScale;
                     updateTransform();
                 }
-                lastTouchDistance = distance;
-            } else if (e.touches.length === 1 && isDragging) {
-                translateX = e.touches[0].clientX - startX;
-                translateY = e.touches[0].clientY - startY;
-                updateTransform();
+            }
+        }, { passive: false });
+
+        mapViewport.addEventListener('touchend', (e) => {
+            isDragging = false;
+            touches = Array.from(e.touches);
+            
+            // 如果还剩一个手指，重新初始化拖拽
+            if (touches.length === 1) {
+                startX = touches[0].clientX - translateX;
+                startY = touches[0].clientY - translateY;
+                isDragging = true;
             }
         });
 
-        mapViewport.addEventListener('touchend', () => {
+        mapViewport.addEventListener('touchcancel', () => {
             isDragging = false;
-            lastTouchDistance = 0;
+            touches = [];
         });
 
         // 导航
@@ -1570,8 +1985,26 @@
             if (e.key === '0') resetView();
         });
 
+        // 窗口大小改变时重置移动端布局
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 768) {
+                // 桌面端：移除所有active类，恢复三栏布局
+                document.getElementById('timelinePanel').classList.remove('active');
+                document.getElementById('infoPanel').classList.remove('active');
+                document.querySelectorAll('.mobile-tab').forEach(tab => tab.classList.remove('active'));
+            } else {
+                // 移动端：默认显示地图
+                switchMobileTab('map');
+            }
+        });
+
         // 初始化
         initTimeline();
+        
+        // 初始状态设置
+        if (window.innerWidth <= 768) {
+            switchMobileTab('map');
+        }
     </script>
 </body>
 </html>
