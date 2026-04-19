@@ -12,12 +12,12 @@
             padding: 0;
             box-sizing: border-box;
             -webkit-tap-highlight-color: transparent;
-            /* 强制禁止任何竖排模式 */
             writing-mode: horizontal-tb !important;
             text-orientation: mixed !important;
         }
 
         :root {
+            /* 深色主题（默认） */
             --bg-dark: #1a1a2e;
             --bg-panel: #16213e;
             --bg-hover: #0f3460;
@@ -29,8 +29,25 @@
             --text-muted: #a0a0a0;
             --border: rgba(255,255,255,0.1);
             --ink: #2c3e50;
+            --header-text: #f4d03f;
             --safe-top: env(safe-area-inset-top, 0px);
             --safe-bottom: env(safe-area-inset-bottom, 0px);
+        }
+
+        /* 宣纸主题 */
+        body.rice-paper-theme {
+            --bg-dark: #f5f0e8;
+            --bg-panel: #ebe5d9;
+            --bg-hover: #ddd5c5;
+            --accent: #8b4513;
+            --accent-light: #a0522d;
+            --gold: #8b4513;
+            --gold-light: #a0522d;
+            --text: #2c2416;
+            --text-muted: #5c4d3c;
+            --border: rgba(139, 69, 19, 0.2);
+            --ink: #2c2416;
+            --header-text: #5c4d3c;
         }
 
         html, body {
@@ -42,6 +59,84 @@
             height: 100dvh;
             width: 100%;
             position: fixed;
+            transition: background 0.5s ease, color 0.5s ease;
+        }
+
+        /* 历史感过渡动画层 */
+        .transition-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .transition-overlay.active {
+            opacity: 1;
+        }
+
+        .transition-overlay::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #0a0a0f;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+        }
+
+        .transition-overlay.active::before {
+            opacity: 1;
+        }
+
+        .ink-drop {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 30%, transparent 70%);
+            transform: scale(0);
+            opacity: 0;
+        }
+
+        .transition-overlay.active .ink-drop {
+            animation: inkSpread 2s ease-out forwards;
+        }
+
+        @keyframes inkSpread {
+            0% {
+                transform: scale(0);
+                opacity: 0.8;
+            }
+            50% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        .scroll-reveal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 0;
+            height: 2px;
+            background: var(--gold);
+            opacity: 0;
+            transition: all 1s ease;
+        }
+
+        .transition-overlay.active .scroll-reveal {
+            width: 100%;
+            opacity: 1;
+            transition-delay: 0.5s;
         }
 
         /* 标题界面样式 */
@@ -60,15 +155,22 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            transition: opacity 0.8s ease, visibility 0.8s ease;
+            transition: opacity 1.2s ease, visibility 1.2s ease, transform 1.2s ease;
             padding: 20px;
             padding-top: calc(20px + var(--safe-top));
             padding-bottom: calc(20px + var(--safe-bottom));
         }
 
+        body.rice-paper-theme .title-screen {
+            background: 
+                radial-gradient(ellipse at center, rgba(139, 69, 19, 0.1) 0%, transparent 70%),
+                linear-gradient(180deg, #e8e0d0 0%, #f5f0e8 50%, #ebe5d9 100%);
+        }
+
         .title-screen.hidden {
             opacity: 0;
             visibility: hidden;
+            transform: scale(1.1) translateY(-50px);
             pointer-events: none;
         }
 
@@ -83,6 +185,12 @@
                 repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(212, 175, 55, 0.03) 35px, rgba(212, 175, 55, 0.03) 70px),
                 repeating-linear-gradient(-45deg, transparent, transparent 35px, rgba(233, 69, 96, 0.02) 35px, rgba(233, 69, 96, 0.02) 70px);
             pointer-events: none;
+        }
+
+        body.rice-paper-theme .title-screen::before {
+            background-image: 
+                repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(139, 69, 19, 0.03) 35px, rgba(139, 69, 19, 0.03) 70px),
+                repeating-linear-gradient(-45deg, transparent, transparent 35px, rgba(160, 82, 45, 0.02) 35px, rgba(160, 82, 45, 0.02) 70px);
         }
 
         .top-ornament {
@@ -203,7 +311,6 @@
             line-height: 1.8;
             text-align: center;
             margin-bottom: 10px;
-            /* 确保文字横排 */
             white-space: normal !important;
             word-wrap: break-word !important;
             overflow-wrap: break-word !important;
@@ -367,6 +474,12 @@
             gap: 1px;
             background: var(--border);
             position: relative;
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        .container.visible {
+            opacity: 1;
         }
 
         /* 移动端标签栏 */
@@ -405,6 +518,29 @@
             font-size: 1.3rem;
         }
 
+        /* 竖屏导航按钮容器 */
+        .portrait-nav {
+            display: none;
+            position: fixed;
+            bottom: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 150;
+            gap: 20px;
+        }
+
+        .portrait-nav .nav-btn {
+            padding: 10px 24px;
+            background: var(--bg-panel);
+            border: 1px solid var(--gold);
+            color: var(--gold);
+            border-radius: 20px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
         /* 左侧时间轴 */
         .timeline-panel {
             background: var(--bg-panel);
@@ -413,6 +549,7 @@
             overflow: hidden;
             position: relative;
             height: 100%;
+            transition: background 0.5s ease;
         }
 
         .museum-header {
@@ -453,6 +590,37 @@
             letter-spacing: 2px;
         }
 
+        /* 搜索框 */
+        .search-box {
+            padding: 10px 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 8px 12px;
+            background: rgba(0,0,0,0.2);
+            border: 1px solid var(--gold);
+            border-radius: 20px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.85rem;
+            outline: none;
+            transition: all 0.3s;
+        }
+
+        body.rice-paper-theme .search-input {
+            background: rgba(255,255,255,0.5);
+        }
+
+        .search-input:focus {
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
         .quote-banner {
             padding: 10px 12px;
             background: rgba(0, 0, 0, 0.3);
@@ -463,9 +631,12 @@
             font-style: italic;
             line-height: 1.5;
             flex-shrink: 0;
-            /* 确保文字横排 */
             white-space: normal !important;
             word-wrap: break-word !important;
+        }
+
+        body.rice-paper-theme .quote-banner {
+            background: rgba(139, 69, 19, 0.1);
         }
 
         .quote-banner div {
@@ -549,6 +720,10 @@
             color: var(--bg-dark);
         }
 
+        .timeline-item.hidden {
+            display: none;
+        }
+
         .year-badge {
             min-width: 60px;
             padding: 4px 6px;
@@ -562,6 +737,10 @@
             color: var(--gold-light);
             border: 1px solid rgba(212, 175, 55, 0.3);
             flex-shrink: 0;
+        }
+
+        body.rice-paper-theme .year-badge {
+            background: rgba(139, 69, 19, 0.1);
         }
 
         .item-name {
@@ -582,6 +761,7 @@
             display: flex;
             flex-direction: column;
             height: 100%;
+            transition: background 0.5s ease;
         }
 
         .map-header {
@@ -598,17 +778,26 @@
             pointer-events: none;
         }
 
+        body.rice-paper-theme .map-header {
+            background: linear-gradient(180deg, rgba(245,240,232,0.9) 0%, transparent 100%);
+        }
+
         .header-quote {
             text-align: center;
-            color: var(--gold);
+            color: var(--header-text);
             font-size: 0.9rem;
             font-style: italic;
             text-shadow: 0 2px 4px rgba(0,0,0,0.8);
             max-width: 500px;
             line-height: 1.4;
-            /* 确保文字横排 */
             white-space: normal !important;
             word-wrap: break-word !important;
+            font-weight: 600;
+        }
+
+        body.rice-paper-theme .header-quote {
+            text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+            color: var(--gold);
         }
 
         .header-quote div {
@@ -625,6 +814,10 @@
             white-space: nowrap;
         }
 
+        body.rice-paper-theme .header-quote-author {
+            color: var(--text-muted);
+        }
+
         .toolbar {
             position: absolute;
             bottom: 80px;
@@ -638,6 +831,10 @@
             border-radius: 25px;
             border: 1px solid var(--gold);
             backdrop-filter: blur(10px);
+        }
+
+        body.rice-paper-theme .toolbar {
+            background: rgba(235, 229, 217, 0.95);
         }
 
         .tool-btn {
@@ -677,6 +874,15 @@
             touch-action: none;
         }
 
+        body.rice-paper-theme .map-viewport {
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(139, 69, 19, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(160, 82, 45, 0.05) 0%, transparent 50%),
+                linear-gradient(45deg, transparent 48%, rgba(139,69,19,0.03) 50%, transparent 52%),
+                linear-gradient(-45deg, transparent 48%, rgba(139,69,19,0.03) 50%, transparent 52%);
+            background-size: 100% 100%, 100% 100%, 20px 20px, 20px 20px;
+        }
+
         .map-viewport.grabbing {
             cursor: grabbing;
         }
@@ -685,10 +891,9 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%) translateZ(0);
             transition: none;
             will-change: transform;
-            /* 确保容器有足够宽度 */
             width: 90vw;
             height: 80vh;
             display: flex;
@@ -708,6 +913,7 @@
             image-rendering: auto;
             transform: translateZ(0);
             backface-visibility: hidden;
+            pointer-events: none; /* 防止右键菜单 */
         }
 
         .map-image.loaded {
@@ -724,7 +930,6 @@
             padding: 30px;
             width: 90%;
             max-width: 500px;
-            /* 确保容器有足够宽度防止文字竖排 */
             min-width: 300px;
         }
 
@@ -747,7 +952,6 @@
             color: var(--text-muted);
             font-style: italic;
             line-height: 1.8;
-            /* 关键修复：确保文字横排 */
             white-space: normal !important;
             word-wrap: break-word !important;
             overflow-wrap: break-word !important;
@@ -771,6 +975,11 @@
             color: var(--gold);
             font-family: "Courier New", monospace;
             border: 1px solid var(--gold);
+        }
+
+        body.rice-paper-theme .zoom-level {
+            background: rgba(235, 229, 217, 0.9);
+            color: var(--gold);
         }
 
         /* 高清提示 */
@@ -799,6 +1008,7 @@
             flex-direction: column;
             overflow: hidden;
             height: 100%;
+            transition: background 0.5s ease;
         }
 
         .info-header {
@@ -835,6 +1045,11 @@
             text-shadow: 0 0 20px rgba(233, 69, 96, 0.3);
         }
 
+        body.rice-paper-theme .current-year.bc {
+            color: #8b4513;
+            text-shadow: none;
+        }
+
         .current-title {
             font-size: 1rem;
             line-height: 1.4;
@@ -862,6 +1077,10 @@
             border-radius: 8px;
             padding: 15px;
             margin-bottom: 5px;
+        }
+
+        body.rice-paper-theme .era-intro-card {
+            background: rgba(139, 69, 19, 0.05);
         }
 
         .era-intro-title {
@@ -903,6 +1122,10 @@
             padding: 8px 10px;
             border-radius: 6px;
             border-left: 2px solid var(--gold);
+        }
+
+        body.rice-paper-theme .era-detail-item {
+            background: rgba(139, 69, 19, 0.05);
         }
 
         .era-detail-label {
@@ -971,6 +1194,10 @@
             overflow-wrap: break-word !important;
         }
 
+        body.rice-paper-theme .wisdom-quote {
+            background: rgba(139, 69, 19, 0.08);
+        }
+
         .wisdom-author {
             text-align: right;
             font-size: 0.75rem;
@@ -1011,36 +1238,6 @@
             overflow-wrap: break-word !important;
         }
 
-        /* 典藏位置 */
-        .file-path-bar {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-family: "Courier New", monospace;
-            font-size: 0.7rem;
-            color: var(--text-muted);
-            border-left: 3px solid var(--gold);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: auto;
-            flex-shrink: 0;
-        }
-
-        .file-path-label {
-            color: var(--gold);
-            font-size: 0.65rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            white-space: nowrap;
-        }
-
-        .file-path-value {
-            color: var(--text-muted);
-            word-break: break-all;
-            line-height: 1.3;
-        }
-
         .nav-buttons {
             display: flex;
             gap: 10px;
@@ -1048,6 +1245,10 @@
             border-top: 2px solid var(--border);
             background: rgba(0,0,0,0.2);
             flex-shrink: 0;
+        }
+
+        body.rice-paper-theme .nav-buttons {
+            background: rgba(139, 69, 19, 0.05);
         }
 
         .nav-btn {
@@ -1094,12 +1295,20 @@
             word-wrap: break-word !important;
         }
 
+        body.rice-paper-theme .footer-quote {
+            background: rgba(139, 69, 19, 0.05);
+        }
+
         /* 联系方式区域 */
         .contact-section {
             padding: 12px 20px;
             background: rgba(212, 175, 55, 0.05);
             border-top: 1px solid var(--border);
             text-align: center;
+        }
+
+        body.rice-paper-theme .contact-section {
+            background: rgba(139, 69, 19, 0.05);
         }
 
         .contact-title {
@@ -1135,6 +1344,147 @@
             font-size: 0.75rem;
         }
 
+        /* 设置按钮 */
+        .settings-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: var(--bg-panel);
+            border: 1px solid var(--gold);
+            border-radius: 50%;
+            color: var(--gold);
+            cursor: pointer;
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .settings-btn:hover {
+            background: var(--gold);
+            color: var(--bg-dark);
+            transform: rotate(30deg);
+        }
+
+        /* 设置面板 */
+        .settings-panel {
+            position: fixed;
+            top: 0;
+            right: -350px;
+            width: 350px;
+            height: 100%;
+            background: var(--bg-panel);
+            border-left: 2px solid var(--gold);
+            z-index: 1002;
+            transition: right 0.3s ease;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .settings-panel.open {
+            right: 0;
+        }
+
+        .settings-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .settings-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .settings-title {
+            font-size: 1.3rem;
+            color: var(--gold);
+            font-family: "Zhi Mang Xing", cursive;
+        }
+
+        .close-settings {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .settings-section {
+            margin-bottom: 25px;
+        }
+
+        .settings-label {
+            font-size: 0.9rem;
+            color: var(--text);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .theme-options {
+            display: flex;
+            gap: 10px;
+        }
+
+        .theme-option {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .theme-option:hover {
+            border-color: var(--gold);
+        }
+
+        .theme-option.active {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        body.rice-paper-theme .theme-option.active {
+            background: rgba(139, 69, 19, 0.1);
+        }
+
+        .theme-preview {
+            width: 60px;
+            height: 40px;
+            margin: 0 auto 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+        }
+
+        .theme-preview.dark {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+        }
+
+        .theme-preview.rice {
+            background: linear-gradient(135deg, #f5f0e8, #ebe5d9);
+        }
+
         /* 移动端响应式设计 */
         @media (max-width: 1024px) {
             .container {
@@ -1151,6 +1501,10 @@
             }
 
             .mobile-tabs {
+                display: flex;
+            }
+
+            .portrait-nav {
                 display: flex;
             }
 
@@ -1190,7 +1544,7 @@
             }
 
             .toolbar {
-                bottom: 90px;
+                bottom: 130px;
                 padding: 6px 12px;
             }
 
@@ -1201,7 +1555,7 @@
             }
 
             .zoom-level {
-                bottom: 90px;
+                bottom: 130px;
                 right: 15px;
             }
 
@@ -1244,6 +1598,10 @@
                 grid-template-columns: 1fr;
             }
 
+            .nav-buttons {
+                display: none; /* 竖屏隐藏原有导航按钮 */
+            }
+
             .top-ornament {
                 top: 40px;
             }
@@ -1278,6 +1636,11 @@
             .contact-info {
                 font-size: 0.75rem;
             }
+
+            .settings-panel {
+                width: 100%;
+                right: -100%;
+            }
         }
 
         /* 横屏模式优化 */
@@ -1288,6 +1651,10 @@
 
             .mobile-tabs {
                 height: 50px;
+            }
+
+            .portrait-nav {
+                display: none; /* 横屏隐藏竖屏导航 */
             }
 
             .timeline-panel,
@@ -1336,6 +1703,10 @@
             .contact-section {
                 display: none;
             }
+
+            .nav-buttons {
+                display: flex; /* 横屏显示原有导航按钮 */
+            }
         }
 
         /* 小屏幕手机优化 */
@@ -1367,6 +1738,15 @@
 
             .contact-value {
                 font-size: 0.7rem;
+            }
+
+            .portrait-nav {
+                gap: 10px;
+            }
+
+            .portrait-nav .nav-btn {
+                padding: 8px 16px;
+                font-size: 0.85rem;
             }
         }
 
@@ -1433,10 +1813,77 @@
         ::-webkit-scrollbar-thumb:hover {
             background: var(--gold-light);
         }
+
+        /* 防盗图提示 */
+        .protect-toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: rgba(0,0,0,0.9);
+            color: var(--gold);
+            padding: 20px 40px;
+            border-radius: 8px;
+            border: 1px solid var(--gold);
+            z-index: 9999;
+            font-size: 1rem;
+            transition: transform 0.3s ease;
+            pointer-events: none;
+        }
+
+        .protect-toast.show {
+            transform: translate(-50%, -50%) scale(1);
+        }
     </style>
-<base target="_blank">
+    <base target="_blank">
 </head>
 <body>
+    <!-- 历史感过渡动画层 -->
+    <div class="transition-overlay" id="transitionOverlay">
+        <div class="ink-drop" style="width: 200px; height: 200px; top: 30%; left: 20%;"></div>
+        <div class="ink-drop" style="width: 300px; height: 300px; top: 50%; left: 60%; animation-delay: 0.3s;"></div>
+        <div class="ink-drop" style="width: 150px; height: 150px; top: 70%; left: 40%; animation-delay: 0.6s;"></div>
+        <div class="scroll-reveal"></div>
+    </div>
+
+    <!-- 设置按钮 -->
+    <button class="settings-btn" onclick="toggleSettings()" title="设置">⚙️</button>
+
+    <!-- 设置面板 -->
+    <div class="settings-overlay" id="settingsOverlay" onclick="toggleSettings()"></div>
+    <div class="settings-panel" id="settingsPanel">
+        <div class="settings-header">
+            <span class="settings-title">展馆设置</span>
+            <button class="close-settings" onclick="toggleSettings()">✕</button>
+        </div>
+        
+        <div class="settings-section">
+            <label class="settings-label">主题风格</label>
+            <div class="theme-options">
+                <div class="theme-option active" onclick="setTheme('dark')" id="theme-dark">
+                    <div class="theme-preview dark"></div>
+                    <div>玄墨</div>
+                </div>
+                <div class="theme-option" onclick="setTheme('rice')" id="theme-rice">
+                    <div class="theme-preview rice"></div>
+                    <div>宣纸</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-section">
+            <label class="settings-label">关于</label>
+            <div style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.6;">
+                <p>昭燃的历史地图馆</p>
+                <p style="margin-top: 10px;">以史为鉴，可以知兴替</p>
+                <p style="margin-top: 10px;">共收录 58 幅历史地图</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 防盗图提示 -->
+    <div class="protect-toast" id="protectToast">⚠️ 版权保护：禁止保存图片</div>
+
     <!-- 标题界面 -->
     <div class="title-screen" id="titleScreen">
         <div class="corner-ornament top-left"></div>
@@ -1470,12 +1917,16 @@
         </div>
     </div>
 
-    <div class="container" id="mainContainer" style="opacity: 0; transition: opacity 0.5s ease;">
+    <div class="container" id="mainContainer">
         <!-- 左侧时间轴 -->
         <div class="timeline-panel" id="timelinePanel">
             <div class="museum-header">
                 <div class="museum-title">昭燃的历史地图馆</div>
                 <div class="museum-subtitle">以史为鉴 · 可以知兴替</div>
+            </div>
+
+            <div class="search-box">
+                <input type="text" class="search-input" id="searchInput" placeholder="搜索朝代、年份或地图名称..." oninput="handleSearch(this.value)">
             </div>
 
             <div class="quote-banner" id="sidebarQuote">
@@ -1514,13 +1965,12 @@
                     <div class="map-placeholder" id="placeholder">
                         <div class="placeholder-icon">🗺️</div>
                         <div class="welcome-text">昭燃的历史地图馆</div>
-                        <!-- 修复：使用p标签确保文字横排 -->
                         <p class="welcome-quote">
                             "史者，所以明夫治天下之道也"<br>
                             <span style="font-size: 0.9rem; opacity: 0.7;">—— 曾巩《南齐书序》</span>
                         </p>
                     </div>
-                    <img class="map-image" id="mapImage" alt="历史地图">
+                    <img class="map-image" id="mapImage" alt="历史地图" oncontextmenu="return false;">
                 </div>
             </div>
 
@@ -1582,12 +2032,6 @@
                         </div>
                     </div>
                 </div>
-
-                <!-- 典藏位置 -->
-                <div class="file-path-bar" id="filePathBar">
-                    <span class="file-path-label">典藏</span>
-                    <span class="file-path-value" id="filePath">maps/...</span>
-                </div>
             </div>
 
             <div class="nav-buttons">
@@ -1616,6 +2060,12 @@
         </div>
     </div>
 
+    <!-- 竖屏导航按钮 -->
+    <div class="portrait-nav" id="portraitNav">
+        <button class="nav-btn" id="portraitPrevBtn" onclick="navigate(-1)" disabled>← 前朝</button>
+        <button class="nav-btn" id="portraitNextBtn" onclick="navigate(1)" disabled>后世 →</button>
+    </div>
+
     <!-- 移动端底部标签栏 -->
     <div class="mobile-tabs" id="mobileTabs">
         <div class="mobile-tab active" onclick="switchMobileTab('timeline')" id="tab-timeline">
@@ -1633,16 +2083,151 @@
     </div>
 
     <script>
-        // 进入展馆函数
+        // 进入展馆函数 - 带历史感动画
         function enterMuseum() {
             const titleScreen = document.getElementById('titleScreen');
             const mainContainer = document.getElementById('mainContainer');
+            const transitionOverlay = document.getElementById('transitionOverlay');
             
-            titleScreen.classList.add('hidden');
-            mainContainer.style.opacity = '1';
+            // 激活过渡动画
+            transitionOverlay.classList.add('active');
+            
+            // 延迟隐藏标题界面
+            setTimeout(() => {
+                titleScreen.classList.add('hidden');
+            }, 500);
+            
+            // 显示主容器
+            setTimeout(() => {
+                mainContainer.classList.add('visible');
+            }, 800);
+            
+            // 结束过渡动画
+            setTimeout(() => {
+                transitionOverlay.classList.remove('active');
+            }, 2000);
             
             if (window.innerWidth <= 768) {
-                switchMobileTab('map');
+                setTimeout(() => {
+                    switchMobileTab('map');
+                }, 2200);
+            }
+        }
+
+        // 设置面板切换
+        function toggleSettings() {
+            const panel = document.getElementById('settingsPanel');
+            const overlay = document.getElementById('settingsOverlay');
+            panel.classList.toggle('open');
+            overlay.classList.toggle('open');
+        }
+
+        // 主题设置
+        function setTheme(theme) {
+            document.body.classList.remove('rice-paper-theme');
+            document.getElementById('theme-dark').classList.remove('active');
+            document.getElementById('theme-rice').classList.remove('active');
+            
+            if (theme === 'rice') {
+                document.body.classList.add('rice-paper-theme');
+                document.getElementById('theme-rice').classList.add('active');
+                localStorage.setItem('theme', 'rice');
+            } else {
+                document.getElementById('theme-dark').classList.add('active');
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        // 加载保存的主题
+        window.addEventListener('load', () => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'rice') {
+                setTheme('rice');
+            }
+        });
+
+        // 防盗图功能 - 电脑端禁止右键
+        function setupImageProtection() {
+            // 禁止右键菜单
+            document.addEventListener('contextmenu', function(e) {
+                if (e.target.tagName === 'IMG' || e.target.closest('.map-viewport')) {
+                    e.preventDefault();
+                    showProtectToast();
+                    return false;
+                }
+            });
+            
+            // 禁止拖拽图片
+            document.addEventListener('dragstart', function(e) {
+                if (e.target.tagName === 'IMG') {
+                    e.preventDefault();
+                    return false;
+                }
+            });
+            
+            // 禁止复制
+            document.addEventListener('copy', function(e) {
+                if (e.target.closest('.map-viewport')) {
+                    e.preventDefault();
+                    showProtectToast();
+                    return false;
+                }
+            });
+            
+            // 键盘快捷键保护
+            document.addEventListener('keydown', function(e) {
+                // 禁止 Ctrl+S, Ctrl+Shift+S, Ctrl+P
+                if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'p')) {
+                    if (document.getElementById('mapImage').classList.contains('loaded')) {
+                        e.preventDefault();
+                        showProtectToast();
+                        return false;
+                    }
+                }
+            });
+        }
+
+        function showProtectToast() {
+            const toast = document.getElementById('protectToast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // 搜索功能
+        function handleSearch(keyword) {
+            const items = document.querySelectorAll('.timeline-item');
+            const eras = document.querySelectorAll('.era-label');
+            
+            if (!keyword.trim()) {
+                // 显示所有
+                items.forEach(item => item.classList.remove('hidden'));
+                eras.forEach(era => era.style.display = 'flex');
+                return;
+            }
+            
+            const lowerKeyword = keyword.toLowerCase();
+            let hasVisibleItem = false;
+            let currentEra = null;
+            
+            items.forEach((item, index) => {
+                const data = historyData[index];
+                const match = data.name.toLowerCase().includes(lowerKeyword) || 
+                             data.year.toLowerCase().includes(lowerKeyword) ||
+                             data.era.toLowerCase().includes(lowerKeyword);
+                
+                if (match) {
+                    item.classList.remove('hidden');
+                    hasVisibleItem = true;
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+            
+            // 如果没有匹配项，显示提示
+            if (!hasVisibleItem) {
+                // 可以在这里添加"无结果"提示
             }
         }
 
@@ -1651,6 +2236,7 @@
             const timelinePanel = document.getElementById('timelinePanel');
             const infoPanel = document.getElementById('infoPanel');
             const tabs = document.querySelectorAll('.mobile-tab');
+            const portraitNav = document.getElementById('portraitNav');
             
             tabs.forEach(t => t.classList.remove('active'));
             timelinePanel.classList.remove('active');
@@ -1660,8 +2246,15 @@
             
             if (tab === 'timeline') {
                 timelinePanel.classList.add('active');
+                portraitNav.style.display = 'none';
             } else if (tab === 'info') {
                 infoPanel.classList.add('active');
+                portraitNav.style.display = 'none';
+            } else if (tab === 'map') {
+                // 地图标签页显示竖屏导航
+                if (window.innerWidth <= 768 && window.innerHeight > window.innerWidth) {
+                    portraitNav.style.display = 'flex';
+                }
             }
         }
 
@@ -1725,66 +2318,66 @@
             }
         };
 
-        // 历史数据与名言库
+        // 历史数据与名言库 - 所有路径改为webp
         const historyData = [
-            { year: "旧石器", name: "中国境内早期人类主要遗址分布图", era: "史前时期", path: "maps/prehistoric/early_humans.png", span: "约200万年前-1万年前", count: "多处", desc: "展示元谋人、北京人、山顶洞人等早期人类遗址在中国境内的分布情况，揭示人类文明的起源之火。", quote: "火的使用，是人类第一次支配自然力", quoteAuthor: "—— 恩格斯" },
-            { year: "新石器", name: "中国原始农耕时代主要遗址分布图", era: "史前时期", path: "maps/prehistoric/neolithic_farming.png", span: "约1万年前-4000年前", count: "数千处", desc: "呈现仰韶文化、龙山文化等新石器时代农耕遗址的地理分布，农业文明开始点燃华夏大地。", quote: "民以食为天", quoteAuthor: "—— 《汉书·郦食其传》" },
-            { year: "前1850年", name: "夏朝疆域图", era: "早期国家", path: "maps/ancient/xia_1850bc.png", span: "约前2070-前1600年", count: "1个", desc: "中国史书记载的第一个世袭制王朝，统治中心位于黄河中游，标志着中国早期国家形态的形成。", quote: "大道之行也，天下为公", quoteAuthor: "—— 《礼记·礼运》" },
-            { year: "前1400年", name: "商朝疆域图", era: "早期国家", path: "maps/ancient/shang_1400bc.png", span: "约前1600-前1046年", count: "1个", desc: "中国第一个有直接文字记载的王朝，青铜文明高度发达，统治范围较夏朝显著扩大。", quote: "殷鉴不远", quoteAuthor: "—— 《诗经·大雅·荡》" },
-            { year: "前950年", name: "西周疆域图", era: "早期国家", path: "maps/ancient/western_zhou_950bc.png", span: "前1046-前771年", count: "1个", desc: "实行分封制和宗法制，建立了较为完备的政治制度，统治范围覆盖黄河流域和长江流域部分地区。", quote: "普天之下，莫非王土", quoteAuthor: "—— 《诗经·小雅·北山》" },
-            { year: "前600年", name: "春秋形势图", era: "早期国家", path: "maps/ancient/warring_states_600bc.png", span: "前771-前476年", count: "7个主要", desc: "春秋时期，周王室衰微，诸侯争霸，齐桓、晋文等霸主相继崛起。铁器牛耕推广，井田制瓦解，私田兴起。孔子创儒家，老子立道家，百家争鸣先声已现。华夏与四夷融合加速，“诸夏”认同强化，为秦汉统一奠定基础。", quote: "天下兴亡，匹夫有责", quoteAuthor: "—— 顾炎武" },
-            { year: "前296年", name: "战国形势图", era: "早期国家", path: "maps/ancient/warring_states_296bc.png", span: "前475-前221年", count: "7个主要", desc: "战国时期，齐、楚、燕、韩、赵、魏、秦七雄并立，社会剧烈变革。秦国经过商鞅变法日益强大，开始统一六国的进程，中央集权制度逐步形成。", quote: "变法图强", quoteAuthor: "—— 《史记·商君列传》" },
-            { year: "前214年", name: "秦朝疆域图", era: "帝国形成", path: "maps/empire/qin_214bc.png", span: "前221-前206年", count: "1个", desc: "中国历史上第一个大一统中央集权帝国，统一文字、货币、度量衡，修筑长城，疆域东至大海，西达陇西。", quote: "千古一帝", quoteAuthor: "—— 李贽《藏书》" },
-            { year: "前207年", name: "刘邦破咸阳形势图", era: "帝国形成", path: "maps/empire/liu_bang_207bc.png", span: "秦末", count: "多路义军", desc: "秦末农民起义，刘邦率军攻入咸阳，秦朝灭亡，楚汉争霸的序幕拉开。", quote: "大风起兮云飞扬", quoteAuthor: "—— 刘邦《大风歌》" },
-            { year: "前206年", name: "项羽分封形势图", era: "帝国形成", path: "maps/empire/xiang_yu_206bc.png", span: "秦末汉初", count: "18个诸侯", desc: "项羽自立为西楚霸王，分封十八路诸侯，恢复了战国时期的割据局面，为楚汉战争埋下伏笔。", quote: "力拔山兮气盖世", quoteAuthor: "—— 项羽《垓下歌》" },
-            { year: "前50年", name: "西汉疆域图", era: "帝国形成", path: "maps/empire/western_han_50bc.png", span: "前206-8年", count: "1个", desc: "汉武帝时期疆域达到极盛，东并朝鲜，南吞百越，西征大宛，北破匈奴，丝绸之路开通。", quote: "犯强汉者，虽远必诛", quoteAuthor: "—— 陈汤" },
-            { year: "12年", name: "新莽政权形势图", era: "帝国形成", path: "maps/empire/xin_mang_12ad.png", span: "8-23年", count: "1个", desc: "王莽篡汉建立新朝，推行托古改制，引发社会动荡，各地起义频发。", quote: "托古改制", quoteAuthor: "—— 《汉书·王莽传》" },
-            { year: "23年", name: "玄汉形势图", era: "帝国形成", path: "maps/empire/xuan_han_23ad.png", span: "23-25年", count: "1个", desc: "绿林军拥立刘玄为帝，建立更始政权，短暂恢复汉室统治，但很快灭亡。", quote: "人心思汉", quoteAuthor: "—— 《后汉书》" },
-            { year: "102年", name: "东汉疆域图", era: "帝国形成", path: "maps/empire/eastern_han_102ad.png", span: "25-220年", count: "1个", desc: "光武帝刘秀重建汉朝，定都洛阳，西域都护府恢复，班超经营西域，国力逐渐恢复。", quote: "光武中兴", quoteAuthor: "—— 《后汉书》" },
-            { year: "196年", name: "汉末军阀割据形势图", era: "帝国形成", path: "maps/empire/warlords_196ad.png", span: "东汉末年", count: "多个军阀", desc: "黄巾起义后，董卓之乱，各地军阀割据，曹操挟天子以令诸侯，三国鼎立局面逐渐形成。", quote: "对酒当歌，人生几何", quoteAuthor: "—— 曹操《短歌行》" },
-            { year: "260年", name: "三国形势图", era: "帝国形成", path: "maps/empire/three_kingdoms_260ad.png", span: "220-280年", count: "3个", desc: "魏蜀吴三国鼎立，曹操据中原，刘备占巴蜀，孙权据江东，形成相对稳定的割据局面。", quote: "天下三分", quoteAuthor: "—— 陈寿《三国志》" },
-            { year: "281年", name: "西晋疆域图", era: "帝国形成", path: "maps/empire/western_jin_281ad.png", span: "266-316年", count: "1个", desc: "司马炎代魏建晋，灭吴统一全国，但统一局面短暂，八王之乱后迅速衰落。", quote: "三分归晋", quoteAuthor: "—— 《三国演义》" },
-            { year: "327年", name: "东晋十六国形势图（一）", era: "帝国形成", path: "maps/empire/sixteen_kingdoms_327ad.png", span: "317-420年", count: "20余个", desc: "晋室南迁建立东晋，北方陷入五胡十六国的混乱局面，民族大融合与冲突并存。", quote: "衣冠南渡", quoteAuthor: "—— 《晋书》" },
-            { year: "380年", name: "东晋前秦形势图", era: "帝国形成", path: "maps/empire/former_qin_380ad.png", span: "前秦时期", count: "1个主导", desc: "前秦苻坚统一北方，国力强盛，发动淝水之战试图统一全国，但最终失败。", quote: "投鞭断流", quoteAuthor: "—— 《晋书·苻坚载记》" },
-            { year: "417年", name: "东晋十六国形势图（二）", era: "帝国形成", path: "maps/empire/sixteen_kingdoms_417ad.png", span: "317-420年", count: "多个", desc: "淝水之战后北方再次分裂，刘裕北伐收复长安、洛阳，东晋版图达到最大。", quote: "旧时王谢堂前燕", quoteAuthor: "—— 刘禹锡《乌衣巷》" },
-            { year: "450年", name: "宋、北魏形势图（一）", era: "帝国形成", path: "maps/empire/song_wei_450ad.png", span: "南北朝", count: "2个主要", desc: "南朝宋与北朝北魏对峙，南北朝时期开始，南北经济文化差异逐渐明显。", quote: "南朝四百八十寺", quoteAuthor: "—— 杜牧《江南春》" },
-            { year: "473年", name: "宋、北魏形势图（二）", era: "帝国形成", path: "maps/empire/song_wei_473ad.png", span: "南北朝", count: "2个主要", desc: "北魏孝文帝改革前夜，北方民族融合加速，为后来的统一奠定基础。", quote: "胡汉交融", quoteAuthor: "—— 《魏书》" },
-            { year: "497年", name: "齐、东魏西魏形势图", era: "帝国形成", path: "maps/empire/qi_wei_497ad.png", span: "南北朝", count: "3个", desc: "南朝齐与北朝分裂后的东魏、西魏对峙，北魏分裂为东西两部，关中与关东对立。", quote: "关陇集团", quoteAuthor: "—— 陈寅恪" },
-            { year: "540年", name: "梁、东魏西魏形势图", era: "帝国形成", path: "maps/empire/liang_wei_540ad.png", span: "南北朝", count: "3个", desc: "南朝梁与东魏、西魏对峙，侯景之乱前夜，南方经济文化达到高峰。", quote: "南朝金粉", quoteAuthor: "—— 《南史》" },
-            { year: "550年", name: "侯景之乱形势图", era: "帝国形成", path: "maps/empire/hou_jing_550ad.png", span: "548-552年", count: "混乱", desc: "侯景叛乱攻破建康，江南地区遭到严重破坏，南朝从此衰落，南北力量对比逆转。", quote: "千里烟绝", quoteAuthor: "—— 《南史·侯景传》" },
-            { year: "566年", name: "陈、北齐北周形势图", era: "帝国形成", path: "maps/empire/chen_northern_566ad.png", span: "南北朝末期", count: "3个", desc: "南朝最后一个王朝陈与北朝北齐、北周对峙，北周逐渐强大，为隋朝统一奠定基础。", quote: "后庭花", quoteAuthor: "—— 杜牧《泊秦淮》" },
-            { year: "583年", name: "隋、陈形势图", era: "成熟帝国", path: "maps/medieval/sui_chen_583ad.png", span: "581-589年", count: "2个", desc: "隋朝建立后积极准备灭陈，开凿大运河，统一的条件日趋成熟。", quote: " Transitio imperii ", quoteAuthor: "—— 政权交替" },
-            { year: "605年", name: "隋朝疆域图（一）", era: "成熟帝国", path: "maps/medieval/sui_605ad.png", span: "581-618年", count: "1个", desc: "隋文帝统一全国，结束近300年分裂局面，开创开皇之治，疆域辽阔。", quote: "开皇之治", quoteAuthor: "—— 《隋书》" },
-            { year: "612年", name: "隋朝疆域图（二）", era: "成熟帝国", path: "maps/medieval/sui_612ad.png", span: "581-618年", count: "1个", desc: "隋炀帝时期，大运河贯通，但三征高句丽导致国力耗尽，隋末农民起义爆发。", quote: "尽道隋亡为此河", quoteAuthor: "—— 皮日休《汴河怀古》" },
-            { year: "669年", name: "唐朝疆域图（一）", era: "成熟帝国", path: "maps/medieval/tang_669ad.png", span: "618-907年", count: "1个", desc: "唐高宗时期，唐朝疆域达到极盛，东起朝鲜半岛，西达咸海，北包贝加尔湖，南至越南中部。", quote: "天可汗", quoteAuthor: "—— 四夷君长尊号" },
-            { year: "703年", name: "唐朝疆域图（二）", era: "成熟帝国", path: "maps/medieval/tang_703ad.png", span: "武则天时期", count: "1个", desc: "武则天称帝改国号为周，唐朝疆域保持稳定，政治中心东移洛阳。", quote: "政启开元，治宏贞观", quoteAuthor: "—— 郭沫若" },
-            { year: "750年", name: "唐朝疆域图（三）", era: "成熟帝国", path: "maps/medieval/tang_750ad.png", span: "唐玄宗时期", count: "1个", desc: "开元盛世，唐朝国力达到顶峰，长安成为国际性大都市，丝绸之路繁荣。", quote: "忆昔开元全盛日", quoteAuthor: "—— 杜甫《忆昔》" },
-            { year: "783年", name: "唐朝疆域图（四）", era: "成熟帝国", path: "maps/medieval/tang_783ad.png", span: "安史之乱后", count: "1个", desc: "安史之乱后，唐朝由盛转衰，藩镇割据开始，西域逐渐丧失。", quote: "国破山河在", quoteAuthor: "—— 杜甫《春望》" },
-            { year: "866年", name: "唐朝疆域图（五）", era: "成熟帝国", path: "maps/medieval/tang_866ad.png", span: "晚唐", count: "1个", desc: "晚唐时期，藩镇割据加剧，黄巢起义动摇国本，唐朝名存实亡。", quote: "满城尽带黄金甲", quoteAuthor: "—— 黄巢《不第后赋菊》" },
-            { year: "910年", name: "五代十国形势图（一）", era: "成熟帝国", path: "maps/medieval/five_dynasties_910ad.png", span: "907-979年", count: "多个", desc: "唐朝灭亡后，中原相继出现后梁、后唐、后晋、后汉、后周五个短命王朝，南方出现十个割据政权。", quote: "五代更迭", quoteAuthor: "—— 《新五代史》" },
-            { year: "926年", name: "五代十国形势图（二）", era: "成熟帝国", path: "maps/medieval/five_dynasties_926ad.png", span: "907-979年", count: "多个", desc: "后唐庄宗时期，五代十国格局相对稳定，北方战乱频繁，南方相对安定。", quote: "风流总被雨打风吹去", quoteAuthor: "—— 辛弃疾" },
-            { year: "939年", name: "五代十国形势图（三）", era: "成熟帝国", path: "maps/medieval/five_dynasties_939ad.png", span: "907-979年", count: "多个", desc: "后晋石敬瑭割让燕云十六州给契丹，北方边防屏障丧失，影响深远。", quote: "儿皇帝", quoteAuthor: "—— 《新五代史·晋本纪》" },
-            { year: "948年", name: "五代十国形势图（四）", era: "成熟帝国", path: "maps/medieval/five_dynasties_948ad.png", span: "907-979年", count: "多个", desc: "后汉时期，郭威崛起，五代即将结束，统一的趋势日益明显。", quote: "乱世出英雄", quoteAuthor: "—— 《三国演义》" },
-            { year: "959年", name: "五代十国形势图（五）", era: "成熟帝国", path: "maps/medieval/five_dynasties_959ad.png", span: "907-979年", count: "多个", desc: "后周世宗柴荣改革，为北宋统一奠定基础，五代十国接近尾声。", quote: "十年开拓天下", quoteAuthor: "—— 柴荣" },
-            { year: "979年", name: "辽、北宋形势图", era: "成熟帝国", path: "maps/medieval/liao_song_979ad.png", span: "北宋初期", count: "2个主要", desc: "北宋基本统一全国，但未能收复燕云十六州，与辽形成南北对峙。", quote: "先南后北", quoteAuthor: "—— 赵匡胤统一战略" },
-            { year: "1110年", name: "辽西夏北宋形势图", era: "成熟帝国", path: "maps/medieval/liao_xia_song_1110ad.png", span: "北宋中期", count: "3个", desc: "辽、北宋、西夏三足鼎立，北宋与西夏战争频繁，向辽缴纳岁币维持和平。", quote: "澶渊之盟", quoteAuthor: "—— 宋辽和约" },
-            { year: "1170年", name: "金西夏南宋形势图（一）", era: "成熟帝国", path: "maps/medieval/jin_xia_song_1170ad.png", span: "南宋初期", count: "3个", desc: "金灭辽和北宋，南宋建立，宋金对峙，淮河成为南北分界线。", quote: "靖康耻，犹未雪", quoteAuthor: "—— 岳飞《满江红》" },
-            { year: "1206年", name: "金西夏南宋形势图（二）", era: "成熟帝国", path: "maps/medieval/jin_xia_song_1206ad.png", span: "南宋中期", count: "3个", desc: "成吉思汗统一蒙古，金朝衰落，南宋偏安江南，三国力量对比即将剧变。", quote: "一代天骄", quoteAuthor: "—— 毛泽东《沁园春·雪》" },
-            { year: "1280年", name: "元朝疆域图（一）", era: "成熟帝国", path: "maps/medieval/yuan_1280ad.png", span: "元朝初期", count: "1个", desc: "元朝统一全国，疆域空前辽阔，建立行省制度，西藏正式纳入中央管辖。", quote: "北逾阴山，西极流沙", quoteAuthor: "—— 《元史·地理志》" },
-            { year: "1331年", name: "元朝疆域图（二）", era: "成熟帝国", path: "maps/medieval/yuan_1331ad.png", span: "元朝中后期", count: "1个", desc: "元朝中后期，政治腐败，民族矛盾尖锐，农民起义此起彼伏，元朝统治摇摇欲坠。", quote: "石人一只眼", quoteAuthor: "—— 元末民谣" },
-            { year: "1410年", name: "明朝疆域图（一）", era: "传统社会", path: "maps/late_imperial/ming_1410ad.png", span: "明朝初期", count: "1个", desc: "明成祖永乐时期，迁都北京，郑和下西洋，明朝国力达到高峰，疆域包括安南。", quote: "天子守国门", quoteAuthor: "—— 永乐迁都" },
-            { year: "1553年", name: "明朝疆域图（二）", era: "传统社会", path: "maps/late_imperial/ming_1553ad.png", span: "明朝中期", count: "1个", desc: "嘉靖年间，明朝疆域收缩，北方蒙古威胁，东南倭寇侵扰，海禁政策实施。", quote: "倭寇之患", quoteAuthor: "—— 《明史》" },
-            { year: "1628年", name: "明朝疆域图（三）", era: "传统社会", path: "maps/late_imperial/ming_1628ad.png", span: "明朝末年", count: "1个", desc: "崇祯元年，明朝内忧外患，李自成、张献忠起义，后金崛起于东北，明朝灭亡在即。", quote: "君王死社稷", quoteAuthor: "—— 崇祯自缢煤山" },
-            { year: "1760年", name: "清朝疆域图（一）", era: "传统社会", path: "maps/late_imperial/qing_1760ad.png", span: "清朝中期", count: "1个", desc: "乾隆时期，清朝疆域达到极盛，平定准噶尔，统一新疆，疆域西跨葱岭，北接西伯利亚。", quote: "十全武功", quoteAuthor: "—— 乾隆自诩" },
-            { year: "1836年", name: "清朝疆域图（二）", era: "传统社会", path: "maps/late_imperial/qing_1836ad.png", span: "清朝晚期", count: "1个", desc: "鸦片战争前夜，清朝由盛转衰，西方列强开始侵略，中国逐步沦为半殖民地。", quote: "三千年未有之大变局", quoteAuthor: "—— 李鸿章" },
-            { year: "1898年", name: "列强划分势力范围示意图", era: "中国近代", path: "maps/modern/spheres_1898ad.png", span: "晚清", count: "多个列强", desc: "甲午战争后，列强瓜分中国狂潮，德国占胶州湾，俄国租旅顺大连，英国租威海卫、香港新界。", quote: "瓜分豆剖", quoteAuthor: "—— 康有为" },
-            { year: "1908年", name: "清朝疆域图", era: "中国近代", path: "maps/modern/qing_1908ad.png", span: "清末", count: "1个", desc: "清末新政时期，清朝疆域大幅收缩，边疆危机严重，但仍是名义上的统一帝国。", quote: "量中华之物力", quoteAuthor: "—— 慈禧太后" },
-            { year: "1913年", name: "中华民国(北洋政府)形势图", era: "中国近代", path: "maps/modern/republic_1913ad.png", span: "民国初期", count: "1个名义", desc: "辛亥革命后，北洋政府统治，军阀割据开始，袁世凯称帝失败，中国陷入分裂。", quote: "革命尚未成功", quoteAuthor: "—— 孙中山" },
-            { year: "1937年", name: "中华民国(国民政府)形势图（一）", era: "中国近代", path: "maps/modern/republic_1937ad.png", span: "抗战前", count: "1个名义", desc: "南京国民政府形式统一全国，但中共建立苏区，日本侵占东北，国共内战与民族危机并存。", quote: "一寸山河一寸血", quoteAuthor: "—— 抗战名言" },
-            { year: "1946年", name: "中华民国(国民政府)形势图（二）", era: "中国近代", path: "maps/modern/republic_1946ad.png", span: "抗战后", count: "1个名义", desc: "抗战胜利后，国共矛盾激化，内战全面爆发，解放区迅速扩大。", quote: "天翻地覆慨而慷", quoteAuthor: "—— 毛泽东《七律》" },
-            { year: "1949年", name: "中华民国(国民政府)形势图（三）", era: "中国近代", path: "maps/modern/republic_1949_09ad.png", span: "新中国成立前", count: "1个", desc: "渡江战役后，国民党退守台湾，中华人民共和国成立前夕的版图。", quote: "雄鸡一唱天下白", quoteAuthor: "—— 毛泽东《浣溪沙》" },
-            { year: "1966年", name: "中华人民共和国（一）", era: "中国现代", path: "maps/contemporary/prc_1966ad.png", span: "文革前", count: "1个", desc: "新中国成立初期，完成社会主义改造，疆域基本稳定，但面临国际封锁。", quote: "独立自主", quoteAuthor: "—— 建国方针" },
-            { year: "2025年", name: "中华人民共和国（二）", era: "中国现代", path: "maps/contemporary/prc_2025ad.png", span: "当代", count: "1个", desc: "当代中国，改革开放后经济快速发展，成为世界第二大经济体，疆域包括台湾待统一。", quote: "实现中华民族伟大复兴", quoteAuthor: "—— 中国梦" }
+            { year: "旧石器", name: "中国境内早期人类主要遗址分布图", era: "史前时期", path: "maps/prehistoric/early_humans.webp", span: "约200万年前-1万年前", count: "多元一体的格局", desc: "展示元谋人、北京人、山顶洞人等早期人类遗址在中国境内的分布情况，揭示人类文明的起源之火。", quote: "火的使用，是人类第一次支配自然力", quoteAuthor: "—— 恩格斯" },
+            { year: "新石器", name: "中国原始农耕时代主要遗址分布图", era: "史前时期", path: "maps/prehistoric/neolithic_farming.webp", span: "约1万年前-4000年前", count: "多元一体的格局", desc: "呈现仰韶文化、龙山文化等新石器时代农耕遗址的地理分布，农业文明开始点燃华夏大地。", quote: "民以食为天", quoteAuthor: "—— 《汉书·郦食其传》" },
+            { year: "前1850年", name: "夏朝疆域图", era: "早期国家", path: "maps/ancient/xia_1850bc.webp", span: "约前2070-前1600年", count: "1个", desc: "中国史书记载的第一个世袭制王朝，统治中心位于黄河中游，标志着中国早期国家形态的形成。", quote: "大道之行也，天下为公", quoteAuthor: "—— 《礼记·礼运》" },
+            { year: "前1400年", name: "商朝疆域图", era: "早期国家", path: "maps/ancient/shang_1400bc.webp", span: "约前1600-前1046年", count: "1个", desc: "中国第一个有直接文字记载的王朝，青铜文明高度发达，统治范围较夏朝显著扩大。", quote: "殷鉴不远", quoteAuthor: "—— 《诗经·大雅·荡》" },
+            { year: "前950年", name: "西周疆域图", era: "早期国家", path: "maps/ancient/western_zhou_950bc.webp", span: "前1046-前771年", count: "1个", desc: "实行分封制和宗法制，建立了较为完备的政治制度，统治范围覆盖黄河流域和长江流域部分地区。", quote: "普天之下，莫非王土，率土之滨，莫非王臣", quoteAuthor: "—— 《诗经·小雅·北山》" },
+            { year: "前600年", name: "春秋形势图", era: "早期国家", path: "maps/ancient/warring_states_600bc.webp", span: "前771-前476年", count: "7个主要", desc: "春秋时期，周王室衰微，诸侯争霸，齐桓、晋文等霸主相继崛起。铁器牛耕推广，井田制瓦解，私田兴起。孔子创儒家，老子立道家，百家争鸣先声已现。华夏与四夷融合加速，“诸夏”认同强化，为秦汉统一奠定基础。", quote: "天下兴亡，匹夫有责", quoteAuthor: "—— 顾炎武" },
+            { year: "前296年", name: "战国形势图", era: "早期国家", path: "maps/ancient/warring_states_296bc.webp", span: "前475-前221年", count: "7个主要", desc: "战国时期，齐、楚、燕、韩、赵、魏、秦七雄并立，社会剧烈变革。秦国经过商鞅变法日益强大，开始统一六国的进程，中央集权制度逐步形成。", quote: "变法图强", quoteAuthor: "—— 《史记·商君列传》" },
+            { year: "前214年", name: "秦朝疆域图", era: "帝国形成", path: "maps/empire/qin_214bc.webp", span: "前221-前206年", count: "1个", desc: "中国历史上第一个大一统中央集权帝国，统一文字、货币、度量衡，修筑长城，疆域东至大海，西达陇西。", quote: "千古一帝", quoteAuthor: "—— 李贽《藏书》" },
+            { year: "前207年", name: "刘邦破咸阳形势图", era: "帝国形成", path: "maps/empire/liu_bang_207bc.webp", span: "秦末", count: "多路义军", desc: "秦末农民起义，刘邦率军攻入咸阳，秦朝灭亡，楚汉争霸的序幕拉开。", quote: "大风起兮云飞扬", quoteAuthor: "—— 刘邦《大风歌》" },
+            { year: "前206年", name: "项羽分封形势图", era: "帝国形成", path: "maps/empire/xiang_yu_206bc.webp", span: "秦末汉初", count: "18个诸侯", desc: "项羽自立为西楚霸王，分封十八路诸侯，恢复了战国时期的割据局面，为楚汉战争埋下伏笔。", quote: "力拔山兮气盖世", quoteAuthor: "—— 项羽《垓下歌》" },
+            { year: "前50年", name: "西汉疆域图", era: "帝国形成", path: "maps/empire/western_han_50bc.webp", span: "前206-8年", count: "1个", desc: "汉武帝时期疆域达到极盛，东并朝鲜，南吞百越，西征大宛，北破匈奴，丝绸之路开通。", quote: "犯强汉者，虽远必诛", quoteAuthor: "—— 陈汤" },
+            { year: "12年", name: "新莽政权形势图", era: "帝国形成", path: "maps/empire/xin_mang_12ad.webp", span: "8-23年", count: "1个", desc: "王莽篡汉建立新朝，推行托古改制，引发社会动荡，各地起义频发。", quote: "托古改制", quoteAuthor: "—— 《汉书·王莽传》" },
+            { year: "23年", name: "玄汉形势图", era: "帝国形成", path: "maps/empire/xuan_han_23ad.webp", span: "23-25年", count: "1个", desc: "绿林军拥立刘玄为帝，建立更始政权，短暂恢复汉室统治，但很快灭亡。", quote: "人心思汉", quoteAuthor: "—— 《后汉书》" },
+            { year: "102年", name: "东汉疆域图", era: "帝国形成", path: "maps/empire/eastern_han_102ad.webp", span: "25-220年", count: "1个", desc: "光武帝刘秀重建汉朝，定都洛阳，西域都护府恢复，班超经营西域，国力逐渐恢复。", quote: "光武中兴", quoteAuthor: "—— 《后汉书》" },
+            { year: "196年", name: "汉末军阀割据形势图", era: "帝国形成", path: "maps/empire/warlords_196ad.webp", span: "东汉末年", count: "多个军阀", desc: "黄巾起义后，董卓之乱，各地军阀割据，曹操挟天子以令诸侯，三国鼎立局面逐渐形成。", quote: "对酒当歌，人生几何", quoteAuthor: "—— 曹操《短歌行》" },
+            { year: "260年", name: "三国形势图", era: "帝国形成", path: "maps/empire/three_kingdoms_260ad.webp", span: "220-280年", count: "3个", desc: "魏蜀吴三国鼎立，曹操据中原，刘备占巴蜀，孙权据江东，形成相对稳定的割据局面。", quote: "天下三分", quoteAuthor: "—— 陈寿《三国志》" },
+            { year: "281年", name: "西晋疆域图", era: "帝国形成", path: "maps/empire/western_jin_281ad.webp", span: "266-316年", count: "1个", desc: "司马炎代魏建晋，灭吴统一全国，但统一局面短暂，八王之乱后迅速衰落。", quote: "三分归晋", quoteAuthor: "—— 《三国演义》" },
+            { year: "327年", name: "东晋十六国形势图（一）", era: "帝国形成", path: "maps/empire/sixteen_kingdoms_327ad.webp", span: "317-420年", count: "20余个", desc: "晋室南迁建立东晋，北方陷入五胡十六国的混乱局面，民族大融合与冲突并存。", quote: "衣冠南渡", quoteAuthor: "—— 《晋书》" },
+            { year: "380年", name: "东晋前秦形势图", era: "帝国形成", path: "maps/empire/former_qin_380ad.webp", span: "前秦时期", count: "1个主导", desc: "前秦苻坚统一北方，国力强盛，发动淝水之战试图统一全国，但最终失败。", quote: "投鞭断流", quoteAuthor: "—— 《晋书·苻坚载记》" },
+            { year: "417年", name: "东晋十六国形势图（二）", era: "帝国形成", path: "maps/empire/sixteen_kingdoms_417ad.webp", span: "317-420年", count: "多个", desc: "淝水之战后北方再次分裂，刘裕北伐收复长安、洛阳，东晋版图达到最大。", quote: "旧时王谢堂前燕", quoteAuthor: "—— 刘禹锡《乌衣巷》" },
+            { year: "450年", name: "宋、北魏形势图（一）", era: "帝国形成", path: "maps/empire/song_wei_450ad.webp", span: "南北朝", count: "2个主要", desc: "南朝宋与北朝北魏对峙，南北朝时期开始，南北经济文化差异逐渐明显。", quote: "南朝四百八十寺", quoteAuthor: "—— 杜牧《江南春》" },
+            { year: "473年", name: "宋、北魏形势图（二）", era: "帝国形成", path: "maps/empire/song_wei_473ad.webp", span: "南北朝", count: "2个主要", desc: "北魏孝文帝改革前夜，北方民族融合加速，为后来的统一奠定基础。", quote: "胡汉交融", quoteAuthor: "—— 《魏书》" },
+            { year: "497年", name: "齐、东魏西魏形势图", era: "帝国形成", path: "maps/empire/qi_wei_497ad.webp", span: "南北朝", count: "3个", desc: "南朝齐与北朝分裂后的东魏、西魏对峙，北魏分裂为东西两部，关中与关东对立。", quote: "关陇集团", quoteAuthor: "—— 陈寅恪" },
+            { year: "540年", name: "梁、东魏西魏形势图", era: "帝国形成", path: "maps/empire/liang_wei_540ad.webp", span: "南北朝", count: "3个", desc: "南朝梁与东魏、西魏对峙，侯景之乱前夜，南方经济文化达到高峰。", quote: "南朝金粉", quoteAuthor: "—— 《南史》" },
+            { year: "550年", name: "侯景之乱形势图", era: "帝国形成", path: "maps/empire/hou_jing_550ad.webp", span: "548-552年", count: "混乱", desc: "侯景叛乱攻破建康，江南地区遭到严重破坏，南朝从此衰落，南北力量对比逆转。", quote: "千里烟绝", quoteAuthor: "—— 《南史·侯景传》" },
+            { year: "566年", name: "陈、北齐北周形势图", era: "帝国形成", path: "maps/empire/chen_northern_566ad.webp", span: "南北朝末期", count: "3个", desc: "南朝最后一个王朝陈与北朝北齐、北周对峙，北周逐渐强大，为隋朝统一奠定基础。", quote: "隔江犹唱后庭花", quoteAuthor: "—— 杜牧《泊秦淮》" },
+            { year: "583年", name: "隋、陈形势图", era: "成熟帝国", path: "maps/medieval/sui_chen_583ad.webp", span: "581-589年", count: "2个", desc: "隋朝建立后积极准备灭陈，开凿大运河，统一的条件日趋成熟。", quote: "高祖受终，惟新朝政，开皇三年，遂废诸郡", quoteAuthor: "——《隋书》" },
+            { year: "605年", name: "隋朝疆域图（一）", era: "成熟帝国", path: "maps/medieval/sui_605ad.webp", span: "581-618年", count: "1个", desc: "隋文帝统一全国，结束近300年分裂局面，开创开皇之治，疆域辽阔。", quote: "开皇之治", quoteAuthor: "—— 《隋书》" },
+            { year: "612年", name: "隋朝疆域图（二）", era: "成熟帝国", path: "maps/medieval/sui_612ad.webp", span: "581-618年", count: "1个", desc: "隋炀帝时期，大运河贯通，但三征高句丽导致国力耗尽，隋末农民起义爆发。", quote: "尽道隋亡为此河", quoteAuthor: "—— 皮日休《汴河怀古》" },
+            { year: "669年", name: "唐朝疆域图（一）", era: "成熟帝国", path: "maps/medieval/tang_669ad.webp", span: "618-907年", count: "1个", desc: "唐高宗时期，唐朝疆域达到极盛，东起朝鲜半岛，西达咸海，北包贝加尔湖，南至越南中部。", quote: "天可汗", quoteAuthor: "—— 四夷君长尊号" },
+            { year: "703年", name: "唐朝疆域图（二）", era: "成熟帝国", path: "maps/medieval/tang_703ad.webp", span: "武则天时期", count: "1个", desc: "武则天称帝改国号为周，唐朝疆域保持稳定，政治中心东移洛阳。", quote: "政启开元，治宏贞观", quoteAuthor: "—— 郭沫若" },
+            { year: "750年", name: "唐朝疆域图（三）", era: "成熟帝国", path: "maps/medieval/tang_750ad.webp", span: "唐玄宗时期", count: "1个", desc: "开元盛世，唐朝国力达到顶峰，长安成为国际性大都市，丝绸之路繁荣。", quote: "忆昔开元全盛日，小邑犹藏万家室", quoteAuthor: "—— 杜甫《忆昔》" },
+            { year: "783年", name: "唐朝疆域图（四）", era: "成熟帝国", path: "maps/medieval/tang_783ad.webp", span: "安史之乱后", count: "1个", desc: "安史之乱后，唐朝由盛转衰，藩镇割据开始，西域逐渐丧失。", quote: "国破山河在，城春草木深", quoteAuthor: "—— 杜甫《春望》" },
+            { year: "866年", name: "唐朝疆域图（五）", era: "成熟帝国", path: "maps/medieval/tang_866ad.webp", span: "晚唐", count: "1个", desc: "晚唐时期，藩镇割据加剧，黄巢起义动摇国本，唐朝名存实亡。", quote: "满城尽带黄金甲", quoteAuthor: "—— 黄巢《不第后赋菊》" },
+            { year: "910年", name: "五代十国形势图（一）", era: "成熟帝国", path: "maps/medieval/five_dynasties_910ad.webp", span: "907-979年", count: "多个", desc: "唐朝灭亡后，中原相继出现后梁、后唐、后晋、后汉、后周五个短命王朝，此外还有十个割据政权。", quote: "五代更迭", quoteAuthor: "—— 《新五代史》" },
+            { year: "926年", name: "五代十国形势图（二）", era: "成熟帝国", path: "maps/medieval/five_dynasties_926ad.webp", span: "907-979年", count: "多个", desc: "后唐庄宗时期，五代十国格局相对稳定，北方战乱频繁，南方相对安定。", quote: "风流总被，雨打风吹去", quoteAuthor: "—— 辛弃疾" },
+            { year: "939年", name: "五代十国形势图（三）", era: "成熟帝国", path: "maps/medieval/five_dynasties_939ad.webp", span: "907-979年", count: "多个", desc: "后晋石敬瑭割让燕云十六州给契丹，北方边防屏障丧失，影响深远。", quote: "儿皇帝", quoteAuthor: "—— 《新五代史·晋本纪》" },
+            { year: "948年", name: "五代十国形势图（四）", era: "成熟帝国", path: "maps/medieval/five_dynasties_948ad.webp", span: "907-979年", count: "多个", desc: "后汉时期，郭威崛起，五代即将结束，统一的趋势日益明显。", quote: "乱世出英雄", quoteAuthor: "—— 《三国演义》" },
+            { year: "959年", name: "五代十国形势图（五）", era: "成熟帝国", path: "maps/medieval/five_dynasties_959ad.webp", span: "907-979年", count: "多个", desc: "后周世宗柴荣改革，为北宋统一奠定基础，五代十国接近尾声。", quote: "十年开拓天下，十年养百姓，十年致太平，足矣", quoteAuthor: "—— 柴荣" },
+            { year: "979年", name: "辽、北宋形势图", era: "成熟帝国", path: "maps/medieval/liao_song_979ad.webp", span: "北宋初期", count: "2个主要", desc: "北宋基本统一全国，但未能收复燕云十六州，与辽形成南北对峙。", quote: "先南后北", quoteAuthor: "—— 赵匡胤统一方略" },
+            { year: "1110年", name: "辽西夏北宋形势图", era: "成熟帝国", path: "maps/medieval/liao_xia_song_1110ad.webp", span: "北宋中期", count: "3个", desc: "辽、北宋、西夏三足鼎立，北宋与西夏战争频繁，向辽缴纳岁币维持和平。", quote: "澶渊之盟", quoteAuthor: "—— 宋辽和约" },
+            { year: "1170年", name: "金西夏南宋形势图（一）", era: "成熟帝国", path: "maps/medieval/jin_xia_song_1170ad.webp", span: "南宋初期", count: "3个", desc: "金灭辽和北宋，南宋建立，宋金对峙，淮河成为南北分界线。", quote: "靖康耻，犹未雪", quoteAuthor: "—— 岳飞《满江红》" },
+            { year: "1206年", name: "金西夏南宋形势图（二）", era: "成熟帝国", path: "maps/medieval/jin_xia_song_1206ad.webp", span: "南宋中期", count: "3个", desc: "成吉思汗统一蒙古，金朝衰落，南宋偏安江南，三国力量对比即将剧变。", quote: "一代天骄，成吉思汗", quoteAuthor: "—— 毛泽东《沁园春·雪》" },
+            { year: "1280年", name: "元朝疆域图（一）", era: "成熟帝国", path: "maps/medieval/yuan_1280ad.webp", span: "元朝初期", count: "1个", desc: "元朝统一全国，疆域空前辽阔，建立行省制度，西藏正式纳入中央管辖。", quote: "北逾阴山，西极流沙", quoteAuthor: "—— 《元史·地理志》" },
+            { year: "1331年", name: "元朝疆域图（二）", era: "成熟帝国", path: "maps/medieval/yuan_1331ad.webp", span: "元朝中后期", count: "1个", desc: "元朝中后期，政治腐败，民族矛盾尖锐，农民起义此起彼伏，元朝统治摇摇欲坠。", quote: "石人一只眼", quoteAuthor: "—— 元末民谣" },
+            { year: "1410年", name: "明朝疆域图（一）", era: "传统社会", path: "maps/late_imperial/ming_1410ad.webp", span: "明朝初期", count: "1个", desc: "明成祖永乐时期，迁都北京，郑和下西洋，明朝国力达到高峰，疆域包括安南。", quote: "天子守国门", quoteAuthor: "—— 永乐迁都" },
+            { year: "1553年", name: "明朝疆域图（二）", era: "传统社会", path: "maps/late_imperial/ming_1553ad.webp", span: "明朝中期", count: "1个", desc: "嘉靖年间，明朝疆域收缩，北方蒙古威胁，东南倭寇侵扰，海禁政策实施。", quote: "倭寇之患", quoteAuthor: "—— 《明史》" },
+            { year: "1628年", name: "明朝疆域图（三）", era: "传统社会", path: "maps/late_imperial/ming_1628ad.webp", span: "明朝末年", count: "1个", desc: "崇祯元年，明朝内忧外患，李自成、张献忠起义，后金崛起于东北，明朝灭亡在即。", quote: "君王死社稷", quoteAuthor: "—— 崇祯自缢煤山" },
+            { year: "1760年", name: "清朝疆域图（一）", era: "传统社会", path: "maps/late_imperial/qing_1760ad.webp", span: "清朝中期", count: "1个", desc: "乾隆时期，清朝疆域达到极盛，平定准噶尔，统一新疆，疆域西跨葱岭，北接西伯利亚。", quote: "十全武功", quoteAuthor: "—— 乾隆自诩" },
+            { year: "1836年", name: "清朝疆域图（二）", era: "传统社会", path: "maps/late_imperial/qing_1836ad.webp", span: "清朝晚期", count: "1个", desc: "鸦片战争前夜，清朝由盛转衰，西方列强开始侵略，中国逐步沦为半殖民地。", quote: "三千年未有之大变局", quoteAuthor: "—— 李鸿章" },
+            { year: "1898年", name: "列强划分势力范围示意图", era: "中国近代", path: "maps/modern/spheres_1898ad.webp", span: "晚清", count: "多个列强", desc: "甲午战争后，列强瓜分中国狂潮，德国占胶州湾，俄国租旅顺大连，英国租威海卫、香港新界。", quote: "瓜分豆剖", quoteAuthor: "—— 康有为" },
+            { year: "1908年", name: "清朝疆域图", era: "中国近代", path: "maps/modern/qing_1908ad.webp", span: "清末", count: "1个", desc: "清末新政时期，清朝疆域大幅收缩，边疆危机严重，但仍是名义上的统一帝国。", quote: "量中华之物力，结与国之欢心", quoteAuthor: "—— 慈禧太后" },
+            { year: "1913年", name: "中华民国(北洋政府)形势图", era: "中国近代", path: "maps/modern/republic_1913ad.webp", span: "民国初期", count: "1个名义", desc: "辛亥革命后，北洋政府统治，军阀割据开始，袁世凯称帝失败，中国陷入分裂。", quote: "革命尚未成功", quoteAuthor: "—— 孙中山" },
+            { year: "1937年", name: "中华民国(国民政府)形势图（一）", era: "中国近代", path: "maps/modern/republic_1937ad.webp", span: "抗战前", count: "1个名义", desc: "南京国民政府形式统一全国，但中共建立苏区，日本侵占东北，国共内战与民族危机并存。", quote: "一寸山河一寸血，十万青年十万兵", quoteAuthor: "—— 抗战名言" },
+            { year: "1946年", name: "中华民国(国民政府)形势图（二）", era: "中国近代", path: "maps/modern/republic_1946ad.webp", span: "抗战后", count: "1个名义", desc: "抗战胜利后，国共矛盾激化，内战全面爆发，解放区迅速扩大。", quote: "天翻地覆慨而慷", quoteAuthor: "—— 毛泽东《七律》" },
+            { year: "1949年", name: "中华民国(国民政府)形势图（三）", era: "中国近代", path: "maps/modern/republic_1949_09ad.webp", span: "新中国成立前", count: "1个", desc: "渡江战役后，国民党退守台湾，中华人民共和国即将成立。", quote: "雄鸡一唱天下白", quoteAuthor: "—— 毛泽东《浣溪沙》" },
+            { year: "1966年", name: "中华人民共和国（一）", era: "中国现代", path: "maps/contemporary/prc_1966ad.webp", span: "文革前", count: "1个", desc: "新中国成立初期，完成社会主义改造，疆域基本稳定，但面临国际封锁。", quote: "独立自主", quoteAuthor: "—— 建国方针" },
+            { year: "2025年", name: "中华人民共和国（二）", era: "中国现代", path: "maps/contemporary/prc_2025ad.webp", span: "当代", count: "1个", desc: "当代中国，改革开放后经济快速发展，成为世界第二大经济体，疆域包括台湾待统一。", quote: "实现中华民族伟大复兴", quoteAuthor: "—— 中国梦" }
         ];
 
         // 通用名言库（随机显示）
@@ -1879,13 +2472,22 @@
             loadImage(data.path);
 
             // 更新按钮状态
-            document.getElementById('prevBtn').disabled = index === 0;
-            document.getElementById('nextBtn').disabled = index === historyData.length - 1;
+            updateNavButtons(index);
 
             // 移动端：选择后自动切换到地图标签
             if (window.innerWidth <= 768) {
                 switchMobileTab('map');
             }
+        }
+
+        function updateNavButtons(index) {
+            const prevDisabled = index === 0;
+            const nextDisabled = index === historyData.length - 1;
+            
+            document.getElementById('prevBtn').disabled = prevDisabled;
+            document.getElementById('nextBtn').disabled = nextDisabled;
+            document.getElementById('portraitPrevBtn').disabled = prevDisabled;
+            document.getElementById('portraitNextBtn').disabled = nextDisabled;
         }
 
         function updateInfoPanel(data, index) {
@@ -1899,9 +2501,6 @@
             document.getElementById('metaSpan').textContent = data.span;
             document.getElementById('metaCount').textContent = data.count;
             document.getElementById('metaIndex').textContent = `${index + 1} / ${historyData.length}`;
-            
-            // 更新缩小的典藏位置
-            document.getElementById('filePath').textContent = data.path;
 
             // 更新时期详细介绍卡片
             updateEraIntroCard(data.era);
@@ -1946,7 +2545,7 @@
         }
 
         function updateQuotes(data) {
-            // 更新顶部名言
+            // 更新顶部名言 - 亮色风格
             const headerQuote = document.getElementById('headerQuote');
             if (data.quote) {
                 headerQuote.innerHTML = `
@@ -2067,97 +2666,106 @@
         }
 
         // 鼠标拖拽（桌面端）
-        mapViewport.addEventListener('mousedown', (e) => {
-            if (e.target.closest('.toolbar')) return;
-            isDragging = true;
-            startX = e.clientX - translateX;
-            startY = e.clientY - translateY;
-            mapViewport.classList.add('grabbing');
-        });
+        function setupEventListeners() {
+            // 检查元素是否存在再添加事件监听器
+            if (mapViewport) {
+                mapViewport.addEventListener('mousedown', (e) => {
+                    if (e.target.closest('.toolbar')) return;
+                    isDragging = true;
+                    startX = e.clientX - translateX;
+                    startY = e.clientY - translateY;
+                    mapViewport.classList.add('grabbing');
+                });
 
-        document.addEventListener('mousemove', (e) => {
-            if (!isDragging) return;
-            e.preventDefault();
-            translateX = e.clientX - startX;
-            translateY = e.clientY - startY;
-            updateTransform();
-        });
-
-        document.addEventListener('mouseup', () => {
-            isDragging = false;
-            mapViewport.classList.remove('grabbing');
-        });
-
-        // 滚轮缩放
-        mapViewport.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            const delta = e.deltaY > 0 ? 0.9 : 1.1;
-            scale = Math.max(0.2, Math.min(10, scale * delta));
-            updateTransform();
-            setTimeout(forceRepaint, 50);
-        }, { passive: false });
-
-        // 触摸支持（移动端优化）
-        let touches = [];
-
-        mapViewport.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            touches = Array.from(e.touches);
-            
-            if (touches.length === 1) {
-                isDragging = true;
-                startX = touches[0].clientX - translateX;
-                startY = touches[0].clientY - translateY;
-            } else if (touches.length === 2) {
-                isDragging = false;
-                initialDistance = Math.hypot(
-                    touches[0].clientX - touches[1].clientX,
-                    touches[0].clientY - touches[1].clientY
-                );
-                initialScale = scale;
-            }
-        }, { passive: false });
-
-        mapViewport.addEventListener('touchmove', (e) => {
-            e.preventDefault();
-            touches = Array.from(e.touches);
-            
-            if (touches.length === 1 && isDragging) {
-                translateX = touches[0].clientX - startX;
-                translateY = touches[0].clientY - startY;
-                updateTransform();
-            } else if (touches.length === 2) {
-                const currentDistance = Math.hypot(
-                    touches[0].clientX - touches[1].clientX,
-                    touches[0].clientY - touches[1].clientY
-                );
-                
-                if (initialDistance > 0) {
-                    const newScale = Math.max(0.2, Math.min(10, initialScale * (currentDistance / initialDistance)));
-                    scale = newScale;
+                document.addEventListener('mousemove', (e) => {
+                    if (!isDragging) return;
+                    e.preventDefault();
+                    translateX = e.clientX - startX;
+                    translateY = e.clientY - startY;
                     updateTransform();
-                }
-            }
-        }, { passive: false });
+                });
 
-        mapViewport.addEventListener('touchend', (e) => {
-            isDragging = false;
-            touches = Array.from(e.touches);
-            
-            if (touches.length === 1) {
-                startX = touches[0].clientX - translateX;
-                startY = touches[0].clientY - translateY;
-                isDragging = true;
+                document.addEventListener('mouseup', () => {
+                    isDragging = false;
+                    mapViewport.classList.remove('grabbing');
+                });
             }
-            
-            // 触摸结束后强制重绘
-            setTimeout(forceRepaint, 50);
-        });
 
-        mapViewport.addEventListener('touchcancel', () => {
-            isDragging = false;
-            touches = [];
-        });
+            // 滚轮缩放
+            if (mapViewport) {
+                mapViewport.addEventListener('wheel', (e) => {
+                    e.preventDefault();
+                    const delta = e.deltaY > 0 ? 0.9 : 1.1;
+                    scale = Math.max(0.2, Math.min(10, scale * delta));
+                    updateTransform();
+                    setTimeout(forceRepaint, 50);
+                }, { passive: false });
+            }
+
+            // 触摸支持（移动端优化）
+            let touches = [];
+
+            if (mapViewport) {
+                mapViewport.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                    touches = Array.from(e.touches);
+                    
+                    if (touches.length === 1) {
+                        isDragging = true;
+                        startX = touches[0].clientX - translateX;
+                        startY = touches[0].clientY - translateY;
+                    } else if (touches.length === 2) {
+                        isDragging = false;
+                        initialDistance = Math.hypot(
+                            touches[0].clientX - touches[1].clientX,
+                            touches[0].clientY - touches[1].clientY
+                        );
+                        initialScale = scale;
+                    }
+                }, { passive: false });
+
+                mapViewport.addEventListener('touchmove', (e) => {
+                    e.preventDefault();
+                    touches = Array.from(e.touches);
+                    
+                    if (touches.length === 1 && isDragging) {
+                        translateX = touches[0].clientX - startX;
+                        translateY = touches[0].clientY - startY;
+                        updateTransform();
+                    } else if (touches.length === 2) {
+                        const currentDistance = Math.hypot(
+                            touches[0].clientX - touches[1].clientX,
+                            touches[0].clientY - touches[1].clientY
+                        );
+                        
+                        if (initialDistance > 0) {
+                            const newScale = Math.max(0.2, Math.min(10, initialScale * (currentDistance / initialDistance)));
+                            scale = newScale;
+                            updateTransform();
+                        }
+                    }
+                }, { passive: false });
+
+                mapViewport.addEventListener('touchend', (e) => {
+                    isDragging = false;
+                    touches = Array.from(e.touches);
+                    
+                    if (touches.length === 1) {
+                        startX = touches[0].clientX - translateX;
+                        startY = touches[0].clientY - translateY;
+                        isDragging = true;
+                    }
+                    
+                    // 触摸结束后强制重绘
+                    setTimeout(forceRepaint, 50);
+                });
+
+                mapViewport.addEventListener('touchcancel', () => {
+                    isDragging = false;
+                    touches = [];
+                });
+            }
+        }
 
         // 导航
         function navigate(direction) {
@@ -2179,6 +2787,7 @@
                 document.getElementById('timelinePanel').classList.remove('active');
                 document.getElementById('infoPanel').classList.remove('active');
                 document.querySelectorAll('.mobile-tab').forEach(tab => tab.classList.remove('active'));
+                document.getElementById('portraitNav').style.display = 'none';
             } else {
                 switchMobileTab('map');
             }
@@ -2186,13 +2795,17 @@
             setTimeout(forceRepaint, 100);
         });
 
-        // 初始化
-        initTimeline();
-        
-        // 初始状态设置
-        if (window.innerWidth <= 768) {
-            switchMobileTab('map');
-        }
+        // 等待DOM完全加载后再初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            initTimeline();
+            setupEventListeners();
+            setupImageProtection();
+            
+            // 初始状态设置
+            if (window.innerWidth <= 768) {
+                switchMobileTab('map');
+            }
+        });
     </script>
 </body>
 </html>
