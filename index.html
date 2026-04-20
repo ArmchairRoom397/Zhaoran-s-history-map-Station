@@ -963,6 +963,75 @@
             word-wrap: break-word !important;
             margin-bottom: 5px;
         }
+        /* 加载中动画 */
+        .loading-container {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(212, 175, 55, 0.2);
+            border-top-color: var(--gold);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        body.rice-paper-theme .loading-spinner {
+            border: 3px solid rgba(139, 69, 19, 0.2);
+            border-top-color: var(--gold);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-family: "Zhi Mang Xing", cursive;
+            font-size: 1.5rem;
+            color: var(--gold);
+            margin-bottom: 10px;
+            letter-spacing: 4px;
+        }
+
+        .loading-path {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: "Courier New", monospace;
+            word-break: break-all;
+            max-width: 300px;
+            margin: 0 auto;
+            opacity: 0.7;
+        }
+
+        /* 加载进度条 */
+        .loading-progress {
+            width: 200px;
+            height: 2px;
+            background: rgba(212, 175, 55, 0.2);
+            margin: 15px auto 0;
+            border-radius: 1px;
+            overflow: hidden;
+        }
+
+        body.rice-paper-theme .loading-progress {
+            background: rgba(139, 69, 19, 0.2);
+        }
+
+        .loading-progress-bar {
+            height: 100%;
+            background: var(--gold);
+            animation: progress 2s ease-in-out infinite;
+        }
+
+        @keyframes progress {
+            0% { width: 0%; margin-left: 0%; }
+            50% { width: 30%; margin-left: 35%; }
+            100% { width: 0%; margin-left: 100%; }
+        }
+
 
         .zoom-level {
             position: absolute;
@@ -2320,11 +2389,11 @@
 
         // 历史数据与名言库 - 所有路径改为webp
         const historyData = [
-            { year: "旧石器", name: "中国境内早期人类主要遗址分布图", era: "史前时期", path: "maps/prehistoric/early_humans.webp", span: "约200万年前-1万年前", count: "多元一体的格局", desc: "展示元谋人、北京人、山顶洞人等早期人类遗址在中国境内的分布情况，揭示人类文明的起源之火。", quote: "火的使用，是人类第一次支配自然力", quoteAuthor: "—— 恩格斯" },
-            { year: "新石器", name: "中国原始农耕时代主要遗址分布图", era: "史前时期", path: "maps/prehistoric/neolithic_farming.webp", span: "约1万年前-4000年前", count: "多元一体的格局", desc: "呈现仰韶文化、龙山文化等新石器时代农耕遗址的地理分布，农业文明开始点燃华夏大地。", quote: "民以食为天", quoteAuthor: "—— 《汉书·郦食其传》" },
+            { year: "旧石器", name: "中国境内早期人类主要遗址分布图", era: "史前时期", path: "maps/prehistoric/early_humans.webp", span: "约200万年前-1万年前", count: "多处", desc: "展示元谋人、北京人、山顶洞人等早期人类遗址在中国境内的分布情况，揭示人类文明的起源之火。", quote: "火的使用，是人类第一次支配自然力", quoteAuthor: "—— 恩格斯" },
+            { year: "新石器", name: "中国原始农耕时代主要遗址分布图", era: "史前时期", path: "maps/prehistoric/neolithic_farming.webp", span: "约1万年前-4000年前", count: "数千处", desc: "呈现仰韶文化、龙山文化等新石器时代农耕遗址的地理分布，农业文明开始点燃华夏大地。", quote: "民以食为天", quoteAuthor: "—— 《汉书·郦食其传》" },
             { year: "前1850年", name: "夏朝疆域图", era: "早期国家", path: "maps/ancient/xia_1850bc.webp", span: "约前2070-前1600年", count: "1个", desc: "中国史书记载的第一个世袭制王朝，统治中心位于黄河中游，标志着中国早期国家形态的形成。", quote: "大道之行也，天下为公", quoteAuthor: "—— 《礼记·礼运》" },
             { year: "前1400年", name: "商朝疆域图", era: "早期国家", path: "maps/ancient/shang_1400bc.webp", span: "约前1600-前1046年", count: "1个", desc: "中国第一个有直接文字记载的王朝，青铜文明高度发达，统治范围较夏朝显著扩大。", quote: "殷鉴不远", quoteAuthor: "—— 《诗经·大雅·荡》" },
-            { year: "前950年", name: "西周疆域图", era: "早期国家", path: "maps/ancient/western_zhou_950bc.webp", span: "前1046-前771年", count: "1个", desc: "实行分封制和宗法制，建立了较为完备的政治制度，统治范围覆盖黄河流域和长江流域部分地区。", quote: "普天之下，莫非王土，率土之滨，莫非王臣", quoteAuthor: "—— 《诗经·小雅·北山》" },
+            { year: "前950年", name: "西周疆域图", era: "早期国家", path: "maps/ancient/western_zhou_950bc.webp", span: "前1046-前771年", count: "1个", desc: "实行分封制和宗法制，建立了较为完备的政治制度，统治范围覆盖黄河流域和长江流域部分地区。", quote: "普天之下，莫非王土", quoteAuthor: "—— 《诗经·小雅·北山》" },
             { year: "前600年", name: "春秋形势图", era: "早期国家", path: "maps/ancient/warring_states_600bc.webp", span: "前771-前476年", count: "7个主要", desc: "春秋时期，周王室衰微，诸侯争霸，齐桓、晋文等霸主相继崛起。铁器牛耕推广，井田制瓦解，私田兴起。孔子创儒家，老子立道家，百家争鸣先声已现。华夏与四夷融合加速，“诸夏”认同强化，为秦汉统一奠定基础。", quote: "天下兴亡，匹夫有责", quoteAuthor: "—— 顾炎武" },
             { year: "前296年", name: "战国形势图", era: "早期国家", path: "maps/ancient/warring_states_296bc.webp", span: "前475-前221年", count: "7个主要", desc: "战国时期，齐、楚、燕、韩、赵、魏、秦七雄并立，社会剧烈变革。秦国经过商鞅变法日益强大，开始统一六国的进程，中央集权制度逐步形成。", quote: "变法图强", quoteAuthor: "—— 《史记·商君列传》" },
             { year: "前214年", name: "秦朝疆域图", era: "帝国形成", path: "maps/empire/qin_214bc.webp", span: "前221-前206年", count: "1个", desc: "中国历史上第一个大一统中央集权帝国，统一文字、货币、度量衡，修筑长城，疆域东至大海，西达陇西。", quote: "千古一帝", quoteAuthor: "—— 李贽《藏书》" },
@@ -2345,24 +2414,24 @@
             { year: "497年", name: "齐、东魏西魏形势图", era: "帝国形成", path: "maps/empire/qi_wei_497ad.webp", span: "南北朝", count: "3个", desc: "南朝齐与北朝分裂后的东魏、西魏对峙，北魏分裂为东西两部，关中与关东对立。", quote: "关陇集团", quoteAuthor: "—— 陈寅恪" },
             { year: "540年", name: "梁、东魏西魏形势图", era: "帝国形成", path: "maps/empire/liang_wei_540ad.webp", span: "南北朝", count: "3个", desc: "南朝梁与东魏、西魏对峙，侯景之乱前夜，南方经济文化达到高峰。", quote: "南朝金粉", quoteAuthor: "—— 《南史》" },
             { year: "550年", name: "侯景之乱形势图", era: "帝国形成", path: "maps/empire/hou_jing_550ad.webp", span: "548-552年", count: "混乱", desc: "侯景叛乱攻破建康，江南地区遭到严重破坏，南朝从此衰落，南北力量对比逆转。", quote: "千里烟绝", quoteAuthor: "—— 《南史·侯景传》" },
-            { year: "566年", name: "陈、北齐北周形势图", era: "帝国形成", path: "maps/empire/chen_northern_566ad.webp", span: "南北朝末期", count: "3个", desc: "南朝最后一个王朝陈与北朝北齐、北周对峙，北周逐渐强大，为隋朝统一奠定基础。", quote: "隔江犹唱后庭花", quoteAuthor: "—— 杜牧《泊秦淮》" },
-            { year: "583年", name: "隋、陈形势图", era: "成熟帝国", path: "maps/medieval/sui_chen_583ad.webp", span: "581-589年", count: "2个", desc: "隋朝建立后积极准备灭陈，开凿大运河，统一的条件日趋成熟。", quote: "高祖受终，惟新朝政，开皇三年，遂废诸郡", quoteAuthor: "——《隋书》" },
+            { year: "566年", name: "陈、北齐北周形势图", era: "帝国形成", path: "maps/empire/chen_northern_566ad.webp", span: "南北朝末期", count: "3个", desc: "南朝最后一个王朝陈与北朝北齐、北周对峙，北周逐渐强大，为隋朝统一奠定基础。", quote: "后庭花", quoteAuthor: "—— 杜牧《泊秦淮》" },
+            { year: "583年", name: "隋、陈形势图", era: "成熟帝国", path: "maps/medieval/sui_chen_583ad.webp", span: "581-589年", count: "2个", desc: "隋朝建立后积极准备灭陈，开凿大运河，统一的条件日趋成熟。", quote: " Transitio imperii ", quoteAuthor: "—— 政权交替" },
             { year: "605年", name: "隋朝疆域图（一）", era: "成熟帝国", path: "maps/medieval/sui_605ad.webp", span: "581-618年", count: "1个", desc: "隋文帝统一全国，结束近300年分裂局面，开创开皇之治，疆域辽阔。", quote: "开皇之治", quoteAuthor: "—— 《隋书》" },
             { year: "612年", name: "隋朝疆域图（二）", era: "成熟帝国", path: "maps/medieval/sui_612ad.webp", span: "581-618年", count: "1个", desc: "隋炀帝时期，大运河贯通，但三征高句丽导致国力耗尽，隋末农民起义爆发。", quote: "尽道隋亡为此河", quoteAuthor: "—— 皮日休《汴河怀古》" },
             { year: "669年", name: "唐朝疆域图（一）", era: "成熟帝国", path: "maps/medieval/tang_669ad.webp", span: "618-907年", count: "1个", desc: "唐高宗时期，唐朝疆域达到极盛，东起朝鲜半岛，西达咸海，北包贝加尔湖，南至越南中部。", quote: "天可汗", quoteAuthor: "—— 四夷君长尊号" },
             { year: "703年", name: "唐朝疆域图（二）", era: "成熟帝国", path: "maps/medieval/tang_703ad.webp", span: "武则天时期", count: "1个", desc: "武则天称帝改国号为周，唐朝疆域保持稳定，政治中心东移洛阳。", quote: "政启开元，治宏贞观", quoteAuthor: "—— 郭沫若" },
-            { year: "750年", name: "唐朝疆域图（三）", era: "成熟帝国", path: "maps/medieval/tang_750ad.webp", span: "唐玄宗时期", count: "1个", desc: "开元盛世，唐朝国力达到顶峰，长安成为国际性大都市，丝绸之路繁荣。", quote: "忆昔开元全盛日，小邑犹藏万家室", quoteAuthor: "—— 杜甫《忆昔》" },
-            { year: "783年", name: "唐朝疆域图（四）", era: "成熟帝国", path: "maps/medieval/tang_783ad.webp", span: "安史之乱后", count: "1个", desc: "安史之乱后，唐朝由盛转衰，藩镇割据开始，西域逐渐丧失。", quote: "国破山河在，城春草木深", quoteAuthor: "—— 杜甫《春望》" },
+            { year: "750年", name: "唐朝疆域图（三）", era: "成熟帝国", path: "maps/medieval/tang_750ad.webp", span: "唐玄宗时期", count: "1个", desc: "开元盛世，唐朝国力达到顶峰，长安成为国际性大都市，丝绸之路繁荣。", quote: "忆昔开元全盛日", quoteAuthor: "—— 杜甫《忆昔》" },
+            { year: "783年", name: "唐朝疆域图（四）", era: "成熟帝国", path: "maps/medieval/tang_783ad.webp", span: "安史之乱后", count: "1个", desc: "安史之乱后，唐朝由盛转衰，藩镇割据开始，西域逐渐丧失。", quote: "国破山河在", quoteAuthor: "—— 杜甫《春望》" },
             { year: "866年", name: "唐朝疆域图（五）", era: "成熟帝国", path: "maps/medieval/tang_866ad.webp", span: "晚唐", count: "1个", desc: "晚唐时期，藩镇割据加剧，黄巢起义动摇国本，唐朝名存实亡。", quote: "满城尽带黄金甲", quoteAuthor: "—— 黄巢《不第后赋菊》" },
-            { year: "910年", name: "五代十国形势图（一）", era: "成熟帝国", path: "maps/medieval/five_dynasties_910ad.webp", span: "907-979年", count: "多个", desc: "唐朝灭亡后，中原相继出现后梁、后唐、后晋、后汉、后周五个短命王朝，此外还有十个割据政权。", quote: "五代更迭", quoteAuthor: "—— 《新五代史》" },
-            { year: "926年", name: "五代十国形势图（二）", era: "成熟帝国", path: "maps/medieval/five_dynasties_926ad.webp", span: "907-979年", count: "多个", desc: "后唐庄宗时期，五代十国格局相对稳定，北方战乱频繁，南方相对安定。", quote: "风流总被，雨打风吹去", quoteAuthor: "—— 辛弃疾" },
+            { year: "910年", name: "五代十国形势图（一）", era: "成熟帝国", path: "maps/medieval/five_dynasties_910ad.webp", span: "907-979年", count: "多个", desc: "唐朝灭亡后，中原相继出现后梁、后唐、后晋、后汉、后周五个短命王朝，南方出现十个割据政权。", quote: "五代更迭", quoteAuthor: "—— 《新五代史》" },
+            { year: "926年", name: "五代十国形势图（二）", era: "成熟帝国", path: "maps/medieval/five_dynasties_926ad.webp", span: "907-979年", count: "多个", desc: "后唐庄宗时期，五代十国格局相对稳定，北方战乱频繁，南方相对安定。", quote: "风流总被雨打风吹去", quoteAuthor: "—— 辛弃疾" },
             { year: "939年", name: "五代十国形势图（三）", era: "成熟帝国", path: "maps/medieval/five_dynasties_939ad.webp", span: "907-979年", count: "多个", desc: "后晋石敬瑭割让燕云十六州给契丹，北方边防屏障丧失，影响深远。", quote: "儿皇帝", quoteAuthor: "—— 《新五代史·晋本纪》" },
             { year: "948年", name: "五代十国形势图（四）", era: "成熟帝国", path: "maps/medieval/five_dynasties_948ad.webp", span: "907-979年", count: "多个", desc: "后汉时期，郭威崛起，五代即将结束，统一的趋势日益明显。", quote: "乱世出英雄", quoteAuthor: "—— 《三国演义》" },
-            { year: "959年", name: "五代十国形势图（五）", era: "成熟帝国", path: "maps/medieval/five_dynasties_959ad.webp", span: "907-979年", count: "多个", desc: "后周世宗柴荣改革，为北宋统一奠定基础，五代十国接近尾声。", quote: "十年开拓天下，十年养百姓，十年致太平，足矣", quoteAuthor: "—— 柴荣" },
-            { year: "979年", name: "辽、北宋形势图", era: "成熟帝国", path: "maps/medieval/liao_song_979ad.webp", span: "北宋初期", count: "2个主要", desc: "北宋基本统一全国，但未能收复燕云十六州，与辽形成南北对峙。", quote: "先南后北", quoteAuthor: "—— 赵匡胤统一方略" },
+            { year: "959年", name: "五代十国形势图（五）", era: "成熟帝国", path: "maps/medieval/five_dynasties_959ad.webp", span: "907-979年", count: "多个", desc: "后周世宗柴荣改革，为北宋统一奠定基础，五代十国接近尾声。", quote: "十年开拓天下", quoteAuthor: "—— 柴荣" },
+            { year: "979年", name: "辽、北宋形势图", era: "成熟帝国", path: "maps/medieval/liao_song_979ad.webp", span: "北宋初期", count: "2个主要", desc: "北宋基本统一全国，但未能收复燕云十六州，与辽形成南北对峙。", quote: "先南后北", quoteAuthor: "—— 赵匡胤统一战略" },
             { year: "1110年", name: "辽西夏北宋形势图", era: "成熟帝国", path: "maps/medieval/liao_xia_song_1110ad.webp", span: "北宋中期", count: "3个", desc: "辽、北宋、西夏三足鼎立，北宋与西夏战争频繁，向辽缴纳岁币维持和平。", quote: "澶渊之盟", quoteAuthor: "—— 宋辽和约" },
             { year: "1170年", name: "金西夏南宋形势图（一）", era: "成熟帝国", path: "maps/medieval/jin_xia_song_1170ad.webp", span: "南宋初期", count: "3个", desc: "金灭辽和北宋，南宋建立，宋金对峙，淮河成为南北分界线。", quote: "靖康耻，犹未雪", quoteAuthor: "—— 岳飞《满江红》" },
-            { year: "1206年", name: "金西夏南宋形势图（二）", era: "成熟帝国", path: "maps/medieval/jin_xia_song_1206ad.webp", span: "南宋中期", count: "3个", desc: "成吉思汗统一蒙古，金朝衰落，南宋偏安江南，三国力量对比即将剧变。", quote: "一代天骄，成吉思汗", quoteAuthor: "—— 毛泽东《沁园春·雪》" },
+            { year: "1206年", name: "金西夏南宋形势图（二）", era: "成熟帝国", path: "maps/medieval/jin_xia_song_1206ad.webp", span: "南宋中期", count: "3个", desc: "成吉思汗统一蒙古，金朝衰落，南宋偏安江南，三国力量对比即将剧变。", quote: "一代天骄", quoteAuthor: "—— 毛泽东《沁园春·雪》" },
             { year: "1280年", name: "元朝疆域图（一）", era: "成熟帝国", path: "maps/medieval/yuan_1280ad.webp", span: "元朝初期", count: "1个", desc: "元朝统一全国，疆域空前辽阔，建立行省制度，西藏正式纳入中央管辖。", quote: "北逾阴山，西极流沙", quoteAuthor: "—— 《元史·地理志》" },
             { year: "1331年", name: "元朝疆域图（二）", era: "成熟帝国", path: "maps/medieval/yuan_1331ad.webp", span: "元朝中后期", count: "1个", desc: "元朝中后期，政治腐败，民族矛盾尖锐，农民起义此起彼伏，元朝统治摇摇欲坠。", quote: "石人一只眼", quoteAuthor: "—— 元末民谣" },
             { year: "1410年", name: "明朝疆域图（一）", era: "传统社会", path: "maps/late_imperial/ming_1410ad.webp", span: "明朝初期", count: "1个", desc: "明成祖永乐时期，迁都北京，郑和下西洋，明朝国力达到高峰，疆域包括安南。", quote: "天子守国门", quoteAuthor: "—— 永乐迁都" },
@@ -2371,11 +2440,11 @@
             { year: "1760年", name: "清朝疆域图（一）", era: "传统社会", path: "maps/late_imperial/qing_1760ad.webp", span: "清朝中期", count: "1个", desc: "乾隆时期，清朝疆域达到极盛，平定准噶尔，统一新疆，疆域西跨葱岭，北接西伯利亚。", quote: "十全武功", quoteAuthor: "—— 乾隆自诩" },
             { year: "1836年", name: "清朝疆域图（二）", era: "传统社会", path: "maps/late_imperial/qing_1836ad.webp", span: "清朝晚期", count: "1个", desc: "鸦片战争前夜，清朝由盛转衰，西方列强开始侵略，中国逐步沦为半殖民地。", quote: "三千年未有之大变局", quoteAuthor: "—— 李鸿章" },
             { year: "1898年", name: "列强划分势力范围示意图", era: "中国近代", path: "maps/modern/spheres_1898ad.webp", span: "晚清", count: "多个列强", desc: "甲午战争后，列强瓜分中国狂潮，德国占胶州湾，俄国租旅顺大连，英国租威海卫、香港新界。", quote: "瓜分豆剖", quoteAuthor: "—— 康有为" },
-            { year: "1908年", name: "清朝疆域图", era: "中国近代", path: "maps/modern/qing_1908ad.webp", span: "清末", count: "1个", desc: "清末新政时期，清朝疆域大幅收缩，边疆危机严重，但仍是名义上的统一帝国。", quote: "量中华之物力，结与国之欢心", quoteAuthor: "—— 慈禧太后" },
+            { year: "1908年", name: "清朝疆域图", era: "中国近代", path: "maps/modern/qing_1908ad.webp", span: "清末", count: "1个", desc: "清末新政时期，清朝疆域大幅收缩，边疆危机严重，但仍是名义上的统一帝国。", quote: "量中华之物力", quoteAuthor: "—— 慈禧太后" },
             { year: "1913年", name: "中华民国(北洋政府)形势图", era: "中国近代", path: "maps/modern/republic_1913ad.webp", span: "民国初期", count: "1个名义", desc: "辛亥革命后，北洋政府统治，军阀割据开始，袁世凯称帝失败，中国陷入分裂。", quote: "革命尚未成功", quoteAuthor: "—— 孙中山" },
-            { year: "1937年", name: "中华民国(国民政府)形势图（一）", era: "中国近代", path: "maps/modern/republic_1937ad.webp", span: "抗战前", count: "1个名义", desc: "南京国民政府形式统一全国，但中共建立苏区，日本侵占东北，国共内战与民族危机并存。", quote: "一寸山河一寸血，十万青年十万兵", quoteAuthor: "—— 抗战名言" },
+            { year: "1937年", name: "中华民国(国民政府)形势图（一）", era: "中国近代", path: "maps/modern/republic_1937ad.webp", span: "抗战前", count: "1个名义", desc: "南京国民政府形式统一全国，但中共建立苏区，日本侵占东北，国共内战与民族危机并存。", quote: "一寸山河一寸血", quoteAuthor: "—— 抗战名言" },
             { year: "1946年", name: "中华民国(国民政府)形势图（二）", era: "中国近代", path: "maps/modern/republic_1946ad.webp", span: "抗战后", count: "1个名义", desc: "抗战胜利后，国共矛盾激化，内战全面爆发，解放区迅速扩大。", quote: "天翻地覆慨而慷", quoteAuthor: "—— 毛泽东《七律》" },
-            { year: "1949年", name: "中华民国(国民政府)形势图（三）", era: "中国近代", path: "maps/modern/republic_1949_09ad.webp", span: "新中国成立前", count: "1个", desc: "渡江战役后，国民党退守台湾，中华人民共和国即将成立。", quote: "雄鸡一唱天下白", quoteAuthor: "—— 毛泽东《浣溪沙》" },
+            { year: "1949年", name: "中华民国(国民政府)形势图（三）", era: "中国近代", path: "maps/modern/republic_1949_09ad.webp", span: "新中国成立前", count: "1个", desc: "渡江战役后，国民党退守台湾，中华人民共和国成立前夕的版图。", quote: "雄鸡一唱天下白", quoteAuthor: "—— 毛泽东《浣溪沙》" },
             { year: "1966年", name: "中华人民共和国（一）", era: "中国现代", path: "maps/contemporary/prc_1966ad.webp", span: "文革前", count: "1个", desc: "新中国成立初期，完成社会主义改造，疆域基本稳定，但面临国际封锁。", quote: "独立自主", quoteAuthor: "—— 建国方针" },
             { year: "2025年", name: "中华人民共和国（二）", era: "中国现代", path: "maps/contemporary/prc_2025ad.webp", span: "当代", count: "1个", desc: "当代中国，改革开放后经济快速发展，成为世界第二大经济体，疆域包括台湾待统一。", quote: "实现中华民族伟大复兴", quoteAuthor: "—— 中国梦" }
         ];
@@ -2455,6 +2524,19 @@
 
             currentIndex = index;
             const data = historyData[index];
+
+            // 预加载相邻地图
+            [index - 1, index + 1].forEach(i => {
+                if (i >= 0 && i < historyData.length) {
+                    const path = historyData[i].path;
+                    if (!window.imageCache) window.imageCache = {};
+                    if (!window.imageCache[path]) {
+                        const img = new Image();
+                        img.src = path;
+                        window.imageCache[path] = img;
+                    }
+                }
+            });
 
             // 更新列表激活状态
             document.querySelectorAll('.timeline-item').forEach((el, i) => {
